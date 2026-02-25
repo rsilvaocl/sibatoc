@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>El Hub</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <style>
+    /* Estilos adicionales para mejorar la experiencia */
+    .status-bar {
+      max-width: 1100px;
+      margin: -1.5rem auto 2rem;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      font-size: 0.85rem;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+    }
+    .dot {
+      height: 8px;
+      width: 8px;
+      background-color: #22c55e;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px #22c55e;
+    }
+    .whatsapp-float {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background: #25d366;
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      z-index: 100;
+      transition: transform 0.3s;
+      text-decoration: none;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>El Hub</h1>
+  <p>Portal central de servicios y aplicaciones</p>
+</header>
+
+<div class="status-bar">
+  <div class="status-item"><span class="dot"></span> Global Edge Network</div>
+  <div class="status-item"><span class="dot"></span> Cloudflare Pages Active</div>
+  <div class="status-item"><span class="dot" style="background:#38bdf8; box-shadow: 0 0 8px #38bdf8;"></span> v2.1.1</div>
+</div>
+
+<section class="grid">
+  <a href="/perfumes/" class="card">
+    <div class="icon">🧴</div>
+    <h2>Perfumes</h2>
+    <p>Catálogo y gestión de productos relacionados con perfumería.</p>
+  </a>
+
+  <a href="/fotografia/" class="card">
+    <div class="icon">📸</div>
+    <h2>Servicios Fotográficos</h2>
+    <p>Fotografía profesional, eventos y portafolio visual.</p>
+  </a>
+
+  <a href="/it/" class="card">
+    <div class="icon">💻</div>
+    <h2>Servicios Informáticos</h2>
+    <p>Soporte técnico, automatización con PowerShell y soluciones IT.</p>
+  </a>
+
+  <a href="https://script.google.com/macros/s/AKfycbz4SnyyWx0X9I2mTkxIZp2aYZ56Nr5lAnM1gy8SaztNLWPW5Aa9v3sxBCtjd7NiDS8m/exec" 
+     target="_blank" 
+     rel="noopener" 
+     class="card">
+    <span class="badge warning">Google Script</span>
+    <div class="icon">💰</div>
+    <h2>Tesorería App</h2>
+    <p>Aplicación financiera interna. Se recomienda usar modo incógnito.</p>
+  </a>
+
+  <div class="card" style="opacity: 0.8; cursor: default;">
+    <div class="icon">📊</div>
+    <h2>Monitor de Sistemas</h2>
+    <p>Estado de reportes de Active Directory y logs de Llama 2.1 8b.</p>
+  </div>
+</section>
+
+<a href="https://wa.me/56994955222" class="whatsapp-float" target="_blank" rel="noopener">
+  <span role="img" aria-label="WhatsApp">💬</span>
+</a>
+
+<footer>
+  © <span id="year"></span> El Hub · Portal de Servicios y Productos · <a href="https://github.com/rsilvaocl" style="color:inherit; text-decoration:none;">GitHub</a>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+<script type="module">
+    import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
+    Chatbot.init({
+        chatflowid: "5552dde5-cc79-453a-b71b-e7e45f547ded",
+        apiHost: "https://rsilvao-elhub.hf.space", // Esta es la URL de tu Space
+        chatflowConfig: {
+            // Aquí puedes añadir configuraciones adicionales si las necesitas
+        },
+        theme: {
+            button: {
+                backgroundColor: "#38bdf8", // Color azul para combinar con tu barra de estado
+                right: 20,
+                bottom: 100, // Lo subimos un poco para que no tape el botón de WhatsApp
+                size: 60,
+                dragAndDrop: true,
+                iconColor: "white",
+            },
+            chatWindow: {
+                welcomeMessage: "¡Hola! Soy el asistente de El Hub. ¿En qué servicio puedo ayudarte hoy?",
+                backgroundColor: "#ffffff",
+                fontSize: 16,
+                title: "Asistente El Hub",
+                titleAvatarLink: "https://raw.githubusercontent.com/rsilvaocl/tu-repo/main/logo.png", // Pon tu logo aquí
+            }
+        }
+    })
+</script>
+</body>
+</html>
