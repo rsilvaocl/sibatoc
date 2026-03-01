@@ -4,162 +4,481 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Sibatoc Group SpA</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
-      --accent: #38bdf8;
-      --text: #f1f5f9;
-      --muted: #94a3b8;
+      --black: #050608;
+      --surface: #0c0d10;
+      --surface2: #13141a;
+      --border: rgba(255,255,255,0.06);
+      --border-bright: rgba(255,255,255,0.12);
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --muted2: #9ca3af;
+      --accent: #00e5ff;
+      --accent2: #7c3aed;
+      --green: #00ff88;
     }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--black);
       color: var(--text);
+      overflow-x: hidden;
     }
 
-    header {
-      text-align: center;
-      padding: 4rem 1rem 2rem;
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
     }
 
-    header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
+    .grid-bg {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none; z-index: 0;
     }
 
-    header p {
-      color: var(--muted);
-      font-size: 1.1rem;
+    .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; background: rgba(0,229,255,0.04); top: -150px; right: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: rgba(124,58,237,0.05); bottom: 10%; left: -100px; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(5,6,8,0.75);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.65rem; }
+    .nav-logo-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 1.1rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text);
+    }
+    .nav-logo-text span { color: var(--accent); }
+    .nav-logo-icon {
+      width: 30px; height: 30px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800;
+      font-family: 'Barlow Condensed', sans-serif;
+      color: var(--black);
+      letter-spacing: 0.05em;
+    }
+    .nav-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; color: var(--muted); letter-spacing: 0.05em;
+    }
+    .nav-status {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; color: var(--green);
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      background: var(--green); border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
     }
 
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 8rem 3rem 4rem;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; color: var(--accent);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 2rem;
+      opacity: 0; animation: slideUp 0.6s ease 0.2s forwards;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block; width: 30px; height: 1px; background: var(--accent);
+    }
+    .hero-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(3.8rem, 9vw, 8rem);
+      line-height: 0.92; letter-spacing: 0.02em; text-transform: uppercase;
+      color: var(--text); margin-bottom: 1.5rem;
+      opacity: 0; animation: slideUp 0.7s ease 0.35s forwards;
+    }
+    .hero-title .accent-line {
+      display: block; color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.18);
+      position: relative;
+    }
+    .hero-title .accent-line::after {
+      content: attr(data-text);
+      position: absolute; left: 0; top: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      clip-path: inset(0 60% 0 0);
+      animation: revealText 1.2s ease 0.9s forwards;
+    }
+    @keyframes revealText { to { clip-path: inset(0 0% 0 0); } }
+
+    .hero-sub {
+      font-size: 1rem; color: var(--muted2); line-height: 1.75;
+      max-width: 520px; font-weight: 300;
+      opacity: 0; animation: slideUp 0.7s ease 0.5s forwards;
+    }
+    .hero-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      margin: 2.5rem 0;
+      opacity: 0; animation: slideUp 0.5s ease 0.7s forwards;
+    }
+    .hero-meta {
+      display: flex; gap: 2.5rem; flex-wrap: wrap;
+      opacity: 0; animation: slideUp 0.5s ease 0.85s forwards;
+    }
+    .meta-item {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em;
+    }
+    .meta-item span {
+      display: block; font-size: 0.63rem; color: var(--muted);
+      margin-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .meta-item strong { color: var(--muted2); font-weight: 500; }
+
+    /* SECTIONS */
     .section {
-      max-width: 1100px;
-      margin: 3rem auto;
-      padding: 0 1.5rem;
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto; padding: 5rem 3rem;
     }
-
-    .section h2 {
-      font-size: 1.8rem;
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; color: var(--accent);
+      letter-spacing: 0.15em; text-transform: uppercase;
       margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.6rem;
     }
-
-    .about {
-      color: var(--muted);
-      line-height: 1.6;
-      max-width: 800px;
+    .section-label::before {
+      content: ''; display: block; width: 20px; height: 1px; background: var(--accent);
     }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.05; letter-spacing: 0.02em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .about-text {
+      font-size: 1rem; color: var(--muted2); line-height: 1.8;
+      max-width: 680px; font-weight: 300; margin-bottom: 2rem;
+    }
+    .legal-block {
+      display: inline-flex; flex-direction: column; gap: 0.3rem;
+      padding: 1rem 1.4rem;
+      border: 1px solid var(--border-bright);
+      border-left: 2px solid var(--accent);
+      background: rgba(0,229,255,0.03);
+      border-radius: 0 8px 8px 0;
+    }
+    .legal-block p {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.73rem; color: var(--muted2); line-height: 1.6;
+    }
+    .legal-block p strong { color: var(--accent); font-weight: 500; }
 
-    .grid {
+    /* UNITS GRID */
+    .units-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 2rem;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; margin-top: 2.5rem;
     }
-
-    .card {
-      background: var(--card);
-      padding: 2rem;
-      border-radius: 12px;
-      text-decoration: none;
-      color: var(--text);
-      transition: transform 0.2s, box-shadow 0.2s;
-      border: 1px solid #334155;
+    .unit-card {
+      background: var(--surface); padding: 2rem;
+      text-decoration: none; color: var(--text);
+      position: relative; transition: background 0.3s ease;
+      display: flex; flex-direction: column; overflow: hidden;
     }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-      border-color: var(--accent);
+    .unit-card.active { cursor: pointer; }
+    .unit-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0; transition: opacity 0.3s ease;
     }
-
-    .card h3 {
-      margin-top: 0;
-      margin-bottom: 0.5rem;
+    .unit-card.active:hover { background: var(--surface2); }
+    .unit-card.active:hover::before { opacity: 1; }
+    .unit-card-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 1.2rem;
     }
-
-    .card p {
-      color: var(--muted);
-      font-size: 0.95rem;
+    .unit-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-bright);
     }
+    .unit-icon-img {
+      width: 40px; height: 40px; border-radius: 10px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-bright);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .unit-icon-img img {
+      width: 100%; height: 100%; object-fit: contain;
+      padding: 4px;
+      filter: brightness(0) invert(1); opacity: 0.7;
+    }
+    .unit-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem; padding: 0.2rem 0.55rem;
+      border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .badge-live { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
+    .badge-dev  { background: rgba(0,229,255,0.08); color: var(--accent); border: 1px solid rgba(0,229,255,0.15); }
+    .badge-coming { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border-bright); }
 
+    .unit-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 1.3rem;
+      margin-bottom: 0.4rem; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .unit-desc {
+      font-size: 0.86rem; color: var(--muted2);
+      line-height: 1.6; font-weight: 300; flex: 1;
+    }
+    .unit-link {
+      display: flex; align-items: center; gap: 0.4rem;
+      margin-top: 1.2rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem; color: var(--accent); letter-spacing: 0.04em;
+      opacity: 0; transform: translateX(-4px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .unit-card.active:hover .unit-link { opacity: 1; transform: translateX(0); }
+    .unit-link::after { content: '→'; }
+
+    /* FOOTER */
     footer {
-      text-align: center;
-      padding: 2rem 1rem;
-      border-top: 1px solid #1e293b;
-      margin-top: 4rem;
-      font-size: 0.9rem;
-      color: var(--muted);
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .footer-left { display: flex; align-items: center; gap: 0.6rem; }
+    .footer-left-icon {
+      width: 22px; height: 22px;
+      background: var(--muted);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; font-weight: 800;
+      font-family: 'Barlow Condensed', sans-serif;
+      color: var(--black); opacity: 0.5;
+    }
+    .footer-left-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 0.9rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    }
+    .footer-left-text span { color: var(--accent); }
+    .footer-right {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem; color: var(--muted); text-align: right;
     }
 
-    .legal {
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
+    /* ANIMATIONS */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      nav { padding: 0.9rem 1.5rem; }
+      .nav-tag { display: none; }
+      .hero { padding: 6.5rem 1.5rem 3rem; }
+      .section { padding: 3.5rem 1.5rem; }
+      .hero-meta { gap: 1.5rem; }
+      footer { padding: 1.8rem 1.5rem; flex-direction: column; align-items: flex-start; }
+      .footer-right { text-align: left; }
     }
   </style>
 </head>
 <body>
 
-<header>
-  <h1>SIBATOC GROUP SpA</h1>
-  <p>Soluciones digitales y comercio especializado</p>
-</header>
+<div class="grid-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
-<section class="section">
-  <h2>Quiénes Somos</h2>
-  <p class="about">
-    Sibatoc Group SpA es una empresa chilena orientada a la innovación digital,
-    automatización de procesos y comercio especializado. Operamos distintas
-    unidades de negocio con enfoque tecnológico y comercial.
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">SG</div>
+    <div class="nav-logo-text">Sibatoc<span>.</span>Group</div>
+  </div>
+  <div class="nav-tag">SpA · SII Chile</div>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    Operativo
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Empresa digital · Santiago, Chile</div>
+  <h1 class="hero-title">
+    Sibatoc<br>
+    <span class="accent-line" data-text="Group SpA">Group SpA</span>
+  </h1>
+  <p class="hero-sub">
+    Iniciativas digitales y comercio especializado con foco en tecnología aplicada y experiencias reales. Proyectos propios con visión de largo plazo.
   </p>
-
-  <div class="legal">
-    Razón Social: Sibatoc Group SpA<br>
-    Inicio de actividades registrado ante el Servicio de Impuestos Internos (Chile)<br>
-    Santiago, Chile
+  <div class="hero-divider"></div>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span>Razón Social</span>
+      <strong>Sibatoc Group SpA</strong>
+    </div>
+    <div class="meta-item">
+      <span>Registro</span>
+      <strong>SII · Chile</strong>
+    </div>
+    <div class="meta-item">
+      <span>Ubicación</span>
+      <strong>Santiago, Chile</strong>
+    </div>
+    <div class="meta-item">
+      <span>Proyectos activos</span>
+      <strong>2 en producción</strong>
+    </div>
   </div>
-</section>
+</div>
 
+<!-- ABOUT -->
 <section class="section">
-  <h2>Nuestras Unidades</h2>
+  <div class="reveal">
+    <div class="section-label">Quiénes Somos</div>
+    <h2 class="section-title">Iniciativas con<br>propósito real</h2>
+    <p class="about-text">
+      Sibatoc Group SpA es una empresa chilena que agrupa distintas iniciativas digitales y comerciales. Desarrollamos herramientas propias, ofrecemos servicios especializados y exploramos nuevos mercados con enfoque práctico y directo.
+    </p>
+    <div class="legal-block">
+      <p><strong>Razón Social:</strong> Sibatoc Group SpA</p>
+      <p><strong>Registro:</strong> Inicio de actividades ante el Servicio de Impuestos Internos (Chile)</p>
+      <p><strong>Domicilio:</strong> Santiago, Región Metropolitana, Chile</p>
+    </div>
+  </div>
+</section>
 
-  <div class="grid">
+<!-- UNITS -->
+<section class="section" style="padding-top: 0;">
+  <div class="reveal">
+    <div class="section-label">Proyectos e Iniciativas</div>
+    <h2 class="section-title">Lo que<br>hacemos</h2>
+  </div>
 
-    <a href="https://elhub.cl" class="card">
-      <h3>Elhub</h3>
-      <p>Micro-SaaS enfocado en automatización de flujos de atención, conexión con clientes y optimización digital para pymes.</p>
+  <div class="units-grid reveal">
+
+    <!-- Elhub — LIVE -->
+    <a href="https://elhub.cl" class="unit-card active" target="_blank" rel="noopener">
+      <div class="unit-card-header">
+        <div class="unit-icon">⚡</div>
+        <div class="unit-badge badge-live">Live</div>
+      </div>
+      <div class="unit-name">Elhub</div>
+      <div class="unit-desc">
+        Micro-SaaS para automatización de flujos de atención y optimización digital para pymes. Conecta clientes y simplifica procesos.
+      </div>
+      <div class="unit-link">elhub.cl</div>
     </a>
 
-    <a href="https://tudominio-perfumes.cl" class="card">
-      <h3>Sibatoc Fragrances</h3>
-      <p>Comercio especializado en perfumes nicho y decants con enfoque en experiencia personalizada.</p>
+    <!-- Tesorería App — LIVE -->
+    <a href="https://script.google.com/macros/s/AKfycbz4SnyyWx0X9I2mTkxIZp2aYZ56Nr5lAnM1gy8SaztNLWPW5Aa9v3sxBCtjd7NiDS8m/exec?authuser=0" class="unit-card active" target="_blank" rel="noopener">
+      <div class="unit-card-header">
+        <div class="unit-icon">📊</div>
+        <div class="unit-badge badge-live">Live</div>
+      </div>
+      <div class="unit-name">Tesorería App</div>
+      <div class="unit-desc">
+        Sistema de gestión de tesorería escolar sobre Google Apps Script. Registro de pagos para directivas y consulta de cuotas para apoderados.
+      </div>
+      <div class="unit-link">Abrir aplicación</div>
     </a>
 
-    <a href="https://tudominio-fotografia.cl" class="card">
-      <h3>Sibatoc Studio</h3>
-      <p>Servicios fotográficos profesionales para eventos, portafolio personal y proyectos comerciales.</p>
-    </a>
+    <!-- Sibatoc Decants — Coming soon -->
+    <div class="unit-card">
+      <div class="unit-card-header">
+        <div class="unit-icon-img">
+          <img src="Logo_tienda_de_decants.PNG" alt="Decants" onerror="this.parentElement.outerHTML='<div class=\'unit-icon\'>🌿</div>'">
+        </div>
+        <div class="unit-badge badge-coming">Próximamente</div>
+      </div>
+      <div class="unit-name">Sibatoc Decants</div>
+      <div class="unit-desc">
+        Tienda especializada en perfumes nicho y decants. Selección curada con experiencia de compra personalizada, carrito directo a WhatsApp y envío a todo Chile.
+      </div>
+    </div>
 
-    <a href="https://tudominio-it.cl" class="card">
-      <h3>Sibatoc Tech</h3>
-      <p>Servicios informáticos, automatización y soluciones tecnológicas para organizaciones.</p>
-    </a>
+    <!-- Sibatoc Studio — In Process -->
+    <div class="unit-card">
+      <div class="unit-card-header">
+        <div class="unit-icon">📷</div>
+        <div class="unit-badge badge-coming">Próximamente</div>
+      </div>
+      <div class="unit-name">Fotografía Pro</div>
+      <div class="unit-desc">
+        Portfolio fotográfico profesional: paisajes, fotografía de productos y arquitectura para inmobiliarias. Basado en Santiago.
+      </div>
+    </div>
 
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer>
-  © <span id="year"></span> Sibatoc Group SpA · Todos los derechos reservados
+  <div class="footer-left">
+    <div class="footer-left-icon">SG</div>
+    <div class="footer-left-text">Sibatoc<span>.</span>Group SpA</div>
+  </div>
+  <div class="footer-right">
+    © <span id="year"></span> Sibatoc Group SpA · Todos los derechos reservados<br>
+    Santiago, Chile · Registrado ante SII
+  </div>
 </footer>
 
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
-</script>
 
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
