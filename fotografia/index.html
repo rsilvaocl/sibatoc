@@ -72,7 +72,11 @@
     }
 
     /* Imagen hero placeholder */
-      .hero-bg { background: url('fotos/tu-foto-hero.jpg') center/cover no-repeat; }
+   .hero-bg {
+    position: absolute; inset: 0;
+    background: url('fotos/tu-foto-hero.jpg') center/cover no-repeat;
+    z-index: 0;
+    }
 
     
     /*.hero-bg {
@@ -508,10 +512,7 @@
 
     <div class="photo-item">
       <img src="fotos/paisaje-01.jpg" alt="Paisaje">
-      <div class="photo-placeholder">
-        <div class="photo-placeholder-icon">🏔</div>
-        <div class="photo-placeholder-tag">Paisaje · foto propia</div>
-      </div>
+    </div>
       <div class="photo-overlay"><span class="photo-overlay-tag">Paisajes</span></div>
     </div>
 
@@ -534,11 +535,8 @@
     </div>
 
     <div class="photo-item">
-      <!-- <img src="fotos/paisaje-02.jpg" alt="Paisaje"> -->
-      <div class="photo-placeholder">
-        <div class="photo-placeholder-icon">🌅</div>
-        <div class="photo-placeholder-tag">Paisaje</div>
-      </div>
+      <img src="fotos/paisaje-02.jpg" alt="Paisaje">
+    </div>
       <div class="photo-overlay"><span class="photo-overlay-tag">Paisajes</span></div>
     </div>
 
@@ -666,7 +664,7 @@
     <div class="sobre-text reveal reveal-delay-1">
       <h3>Fotografía con<br><em>intención</em></h3>
       <p>
-        Soy fotógrafo basado en Santiago, Chile. Mi pasión empezó con los paisajes — la cordillera, la luz del atardecer, los cielos que cambian en segundos. Eso me enseñó a leer la luz y a esperar el momento.
+        Mi nombre es Rubén Silva y soy fotógrafo basado en Santiago, Chile. Mi pasión empezó con los paisajes — la cordillera, el bosque, la luz del atardecer, los cielos que cambian en segundos. Eso me enseñó a leer la luz y a esperar el momento.
       </p>
       <p>
         Hoy aplico esa misma sensibilidad a proyectos comerciales: inmobiliarias que necesitan mostrar sus propiedades en su mejor versión, y marcas que quieren productos que se vean tan bien en pantalla como en persona.
@@ -694,7 +692,7 @@
   <div class="reveal">
     <div class="section-label" style="justify-content:center; margin-bottom: 1.5rem;">04 — Contacto</div>
     <h2 class="section-title" style="margin-bottom: 0.5rem;">¿Tienes un <em>proyecto</em>?</h2>
-    <p>Cuéntame qué necesitas. Respondo en menos de 4 horas.</p>
+    <p>Cuéntame qué necesitas. Respondo rápido.</p>
 
     <div class="cta-group">
       <a href="https://wa.me/56994955222?text=Hola,%20vi%20tu%20portfolio%20y%20me%20interesa%20cotizar%20fotografía" class="btn-primary" target="_blank">
@@ -711,7 +709,6 @@
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">Sibatoc<span>.</span>Studio</div>
-  <a href="https://sibatoc.cl" class="footer-back">← Sibatoc Group SpA</a>
   <div class="footer-copy">© <span id="year"></span> Sibatoc Group SpA</div>
 </footer>
 
