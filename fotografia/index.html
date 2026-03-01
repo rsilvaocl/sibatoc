@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sibatoc Studio · Fotografía</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Barlow+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --border: rgba(255,255,255,0.07);
+      --border-hover: rgba(255,255,255,0.15);
+      --text: #e8e6e1;
+      --muted: #5a5a5a;
+      --muted2: #888;
+      --accent: #c8b89a;   /* warm sand — evoca luz natural */
+      --white: #f5f3ef;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Cormorant Garamond', serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── CURSOR personalizado ── */
+    body { cursor: crosshair; }
+    a, button { cursor: crosshair; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.6rem 3rem;
+      mix-blend-mode: normal;
+    }
+
+    .nav-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 0.95rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--white);
+    }
+    .nav-logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex; gap: 2.5rem; list-style: none;
+    }
+    .nav-links a {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem; color: var(--muted2);
+      text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+
+    /* ── HERO FULL ── */
+    .hero {
+      position: relative;
+      height: 100vh; min-height: 600px;
+      display: flex; flex-direction: column;
+      justify-content: flex-end;
+      padding: 0 3rem 4rem;
+      overflow: hidden;
+    }
+
+    /* Imagen hero placeholder */
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        160deg,
+        #1a1a1a 0%,
+        #0d0d0d 40%,
+        #161410 100%
+      );
+      z-index: 0;
+    }
+
+    /* Cuando tengas foto real, reemplaza .hero-bg con: */
+    /* .hero-bg { background: url('tu-foto-hero.jpg') center/cover no-repeat; } */
+
+    /* Overlay gradient */
+    .hero-bg::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(0,0,0,0.85) 0%,
+        rgba(0,0,0,0.2) 50%,
+        rgba(0,0,0,0.1) 100%
+      );
+    }
+
+    /* Placeholder visual para hero */
+    .hero-placeholder {
+      position: absolute; inset: 0; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 0.8rem;
+    }
+    .hero-placeholder-frame {
+      width: 1px; height: 120px;
+      background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+      opacity: 0.4;
+    }
+    .hero-placeholder-text {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem; color: var(--muted);
+      letter-spacing: 0.15em; text-transform: uppercase;
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 1200px; width: 100%; margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem; color: var(--accent);
+      letter-spacing: 0.2em; text-transform: uppercase;
+      margin-bottom: 1.2rem;
+      opacity: 0; animation: fadeUp 0.8s ease 0.3s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      line-height: 1;
+      color: var(--white);
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+      opacity: 0; animation: fadeUp 0.9s ease 0.45s forwards;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-meta-row {
+      display: flex; align-items: center; gap: 2rem;
+      opacity: 0; animation: fadeUp 0.7s ease 0.65s forwards;
+    }
+    .hero-meta-row p {
+      font-size: 1rem; color: var(--muted2);
+      font-weight: 300; font-style: italic;
+      line-height: 1.5; max-width: 380px;
+    }
+    .hero-scroll {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      text-decoration: none; transition: color 0.2s;
+      margin-left: auto;
+    }
+    .hero-scroll:hover { color: var(--accent); }
+    .scroll-line {
+      width: 40px; height: 1px;
+      background: var(--muted);
+      transition: width 0.3s, background 0.2s;
+    }
+    .hero-scroll:hover .scroll-line { width: 60px; background: var(--accent); }
+
+    /* ── SECTION BASE ── */
+    section {
+      max-width: 1200px; margin: 0 auto;
+      padding: 6rem 3rem;
+    }
+
+    .section-header {
+      display: flex; align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 3rem;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem; color: var(--muted2);
+      letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(1.8rem, 3vw, 2.8rem);
+      line-height: 1.1; letter-spacing: -0.01em;
+    }
+    .section-title em { font-style: italic; color: var(--accent); }
+
+    /* ── PORTFOLIO GRID ── */
+    #portfolio { padding-top: 4rem; }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: 80px;
+      gap: 3px;
+    }
+
+    /* Layout asimétrico para las fotos */
+    .photo-item { position: relative; overflow: hidden; background: var(--bg2); }
+    .photo-item:nth-child(1) { grid-column: 1 / 7; grid-row: 1 / 6; }  /* grande izq */
+    .photo-item:nth-child(2) { grid-column: 7 / 10; grid-row: 1 / 4; } /* med centro */
+    .photo-item:nth-child(3) { grid-column: 10 / 13; grid-row: 1 / 4; }/* med der */
+    .photo-item:nth-child(4) { grid-column: 7 / 10; grid-row: 4 / 6; } /* peq */
+    .photo-item:nth-child(5) { grid-column: 10 / 13; grid-row: 4 / 6; }/* peq */
+    .photo-item:nth-child(6) { grid-column: 1 / 5; grid-row: 6 / 10; } /* med */
+    .photo-item:nth-child(7) { grid-column: 5 / 9; grid-row: 6 / 10; } /* med */
+    .photo-item:nth-child(8) { grid-column: 9 / 13; grid-row: 6 / 10; }/* med */
+
+    .photo-item img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease, filter 0.4s ease;
+      filter: brightness(0.85) saturate(0.9);
+    }
+    .photo-item:hover img {
+      transform: scale(1.04);
+      filter: brightness(1) saturate(1.05);
+    }
+
+    /* Placeholder cuando no hay foto */
+    .photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.6rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      transition: border-color 0.3s;
+    }
+    .photo-item:hover .photo-placeholder { border-color: var(--border-hover); }
+    .photo-placeholder-icon {
+      font-size: 1.2rem; opacity: 0.2;
+    }
+    .photo-placeholder-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.55rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* Overlay con categoría al hover */
+    .photo-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+      opacity: 0; transition: opacity 0.3s ease;
+      display: flex; align-items: flex-end; padding: 1.2rem;
+    }
+    .photo-item:hover .photo-overlay { opacity: 1; }
+    .photo-overlay-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem; color: var(--accent);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    /* ── SERVICIOS ── */
+    #servicios { border-top: 1px solid var(--border); }
+
+    .servicios-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .servicio-card {
+      background: var(--bg);
+      padding: 2.5rem 2rem;
+      transition: background 0.3s;
+    }
+    .servicio-card:hover { background: var(--bg2); }
+
+    .servicio-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem; color: var(--muted);
+      letter-spacing: 0.1em; margin-bottom: 1.5rem;
+    }
+    .servicio-icon { font-size: 1.5rem; margin-bottom: 1rem; opacity: 0.7; }
+    .servicio-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600; font-size: 1.4rem;
+      margin-bottom: 0.8rem; line-height: 1.2;
+    }
+    .servicio-desc {
+      font-size: 0.95rem; color: var(--muted2);
+      line-height: 1.7; font-weight: 300;
+    }
+    .servicio-tags {
+      display: flex; flex-wrap: wrap; gap: 0.4rem;
+      margin-top: 1.5rem;
+    }
+    .tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem; color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 0.2rem 0.6rem; letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── SOBRE MÍ ── */
+    #sobre { border-top: 1px solid var(--border); }
+
+    .sobre-layout {
+      display: grid; grid-template-columns: 1fr 1.6fr; gap: 5rem;
+      align-items: start;
+    }
+    .sobre-foto {
+      aspect-ratio: 3/4;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.6rem;
+      position: relative; overflow: hidden;
+    }
+    .sobre-foto::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+      background: var(--accent); transform: scaleX(0);
+      transition: transform 0.5s ease;
+    }
+    .sobre-foto:hover::after { transform: scaleX(1); }
+    .sobre-foto img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .sobre-foto-placeholder {
+      display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+    }
+    .sobre-foto-placeholder span { font-size: 2rem; opacity: 0.15; }
+    .sobre-foto-placeholder p {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.58rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+
+    .sobre-text h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300; font-size: 2rem;
+      line-height: 1.2; margin-bottom: 1.5rem;
+    }
+    .sobre-text h3 em { font-style: italic; color: var(--accent); }
+    .sobre-text p {
+      font-size: 1.05rem; color: var(--muted2);
+      line-height: 1.85; font-weight: 300; margin-bottom: 1.2rem;
+    }
+    .sobre-datos {
+      margin-top: 2rem;
+      display: flex; flex-direction: column; gap: 0.6rem;
+      border-top: 1px solid var(--border); padding-top: 1.5rem;
+    }
+    .sobre-dato {
+      display: flex; gap: 1rem;
+      font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem;
+    }
+    .sobre-dato span { color: var(--muted); min-width: 120px; letter-spacing: 0.05em; }
+    .sobre-dato strong { color: var(--muted2); font-weight: 400; }
+
+    /* ── CONTACTO ── */
+    #contacto {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 7rem 3rem;
+    }
+    #contacto .section-title { margin-bottom: 1rem; }
+    #contacto p {
+      font-size: 1.05rem; color: var(--muted2);
+      font-weight: 300; font-style: italic;
+      margin-bottom: 3rem;
+    }
+
+    .cta-group {
+      display: flex; align-items: center; justify-content: center;
+      gap: 1rem; flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.7rem;
+      padding: 1rem 2rem;
+      background: var(--accent); color: #0a0a0a;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 0.9rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--white); transform: translateY(-2px); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.7rem;
+      padding: 1rem 2rem;
+      background: transparent;
+      border: 1px solid var(--border-hover);
+      color: var(--muted2);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600; font-size: 0.9rem;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      text-decoration: none;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .footer-logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+    }
+    .footer-logo span { color: var(--accent); }
+    .footer-back {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.08em;
+      transition: color 0.2s;
+    }
+    .footer-back:hover { color: var(--accent); }
+    .footer-copy {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.63rem; color: var(--muted);
+    }
+
+    /* ── ANIMACIONES ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .hero { padding: 0 1.5rem 3rem; }
+      section { padding: 4rem 1.5rem; }
+      .portfolio-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: 200px;
+      }
+      .photo-item:nth-child(n) { grid-column: auto; grid-row: auto; }
+      .photo-item:nth-child(1) { grid-column: 1 / 3; }
+      .servicios-grid { grid-template-columns: 1fr; }
+      .sobre-layout { grid-template-columns: 1fr; gap: 2.5rem; }
+      footer { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Sibatoc<span>.</span>Studio</div>
+  <ul class="nav-links">
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#servicios">Servicios</a></li>
+    <li><a href="#sobre">Sobre mí</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-placeholder">
+    <div class="hero-placeholder-frame"></div>
+    <p class="hero-placeholder-text">← foto hero aquí →</p>
+    <div class="hero-placeholder-frame"></div>
+  </div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Fotografía · Santiago, Chile</p>
+    <h1 class="hero-title">
+      La imagen<br>que <em>habla</em><br>por sí sola
+    </h1>
+    <div class="hero-meta-row">
+      <p>Paisajes, arquitectura e inmobiliaria.<br>Fotografía de productos para marcas.</p>
+      <a href="#portfolio" class="hero-scroll">
+        <span class="scroll-line"></span>
+        Ver portfolio
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- PORTFOLIO -->
+<section id="portfolio">
+  <div class="section-header reveal">
+    <div class="section-label">01 — Portfolio</div>
+    <h2 class="section-title">Trabajo <em>reciente</em></h2>
+  </div>
+
+  <div class="portfolio-grid reveal">
+
+    <div class="photo-item">
+      <!-- <img src="fotos/paisaje-01.jpg" alt="Paisaje"> -->
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">🏔</div>
+        <div class="photo-placeholder-tag">Paisaje · foto propia</div>
+      </div>
+      <div class="photo-overlay"><span class="photo-overlay-tag">Paisajes</span></div>
+    </div>
+
+    <div class="photo-item">
+      <!-- <img src="fotos/arquitectura-01.jpg" alt="Arquitectura"> -->
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">🏛</div>
+        <div class="photo-placeholder-tag">Arquitectura</div>
+      </div>
+      <div class="photo-overlay"><span class="photo-overlay-tag">Arquitectura</span></div>
+    </div>
+
+    <div class="photo-item">
+      <!-- <img src="fotos/producto-01.jpg" alt="Producto"> -->
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">📦</div>
+        <div class="photo-placeholder-tag">Productos</div>
+      </div>
+      <div class="photo-overlay"><span class="photo-overlay-tag">Productos</span></div>
+    </div>
+
+    <div class="photo-item">
+      <!-- <img src="fotos/paisaje-02.jpg" alt="Paisaje"> -->
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">🌅</div>
+        <div class="photo-placeholder-tag">Paisaje</div>
+      </div>
+      <div class="photo-overlay"><span class="photo-overlay-tag">Paisajes</span></div>
+    </div>
+
+    <div class="photo-item">
+      <!-- <img src="fotos/inmobiliaria-01.jpg" alt="Inmobiliaria"> -->
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">🏙</div>
+        <div class="photo-placeholder-tag">Inmobiliaria</div>
+      </div>
+      <div class="photo-overlay"><span class="photo-overlay-tag">Inmobiliaria</span></div>
+    </div>
+
+    <div class="photo-item">
+      <!-- <img src="fotos/paisaje-03.jpg" alt="Paisaje"> -->
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">🌄</div>
+        <div class="photo-placeholder-tag">Paisaje</div>
+      </div>
+      <div class="photo-overlay"><span class="photo-overlay-tag">Paisajes</span></div>
+    </div>
+
+    <div class="photo-item">
+      <!-- <img src="fotos/producto-02.jpg" alt="Producto"> -->
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">🧴</div>
+        <div class="photo-placeholder-tag">Productos</div>
+      </div>
+      <div class="photo-overlay"><span class="photo-overlay-tag">Productos</span></div>
+    </div>
+
+    <div class="photo-item">
+      <!-- <img src="fotos/arquitectura-02.jpg" alt="Arquitectura"> -->
+      <div class="photo-placeholder">
+        <div class="photo-placeholder-icon">🪟</div>
+        <div class="photo-placeholder-tag">Arquitectura</div>
+      </div>
+      <div class="photo-overlay"><span class="photo-overlay-tag">Arquitectura</span></div>
+    </div>
+
+  </div>
+
+  <!-- Instrucciones para agregar fotos (comentadas, solo para ti) -->
+  <!--
+    CÓMO AGREGAR FOTOS:
+    1. Crea una carpeta "fotos/" junto a este HTML
+    2. En cada .photo-item, descomenta la etiqueta <img> y borra el <div class="photo-placeholder">
+    3. Cambia el src por el nombre de tu archivo
+    Ejemplo:
+      <img src="fotos/cordillera-amanecer.jpg" alt="Cordillera al amanecer">
+  -->
+</section>
+
+<!-- SERVICIOS -->
+<section id="servicios">
+  <div class="section-header reveal">
+    <div class="section-label">02 — Servicios</div>
+    <h2 class="section-title">Qué <em>ofrezco</em></h2>
+  </div>
+
+  <div class="servicios-grid">
+
+    <div class="servicio-card reveal">
+      <div class="servicio-num">01</div>
+      <div class="servicio-icon">🏔</div>
+      <div class="servicio-title">Paisajes &amp; Naturaleza</div>
+      <div class="servicio-desc">
+        Fotografía de paisajes naturales, cordillera, costa y entornos urbanos. Prints disponibles bajo pedido.
+      </div>
+      <div class="servicio-tags">
+        <span class="tag">Exterior</span>
+        <span class="tag">Golden hour</span>
+        <span class="tag">Prints</span>
+      </div>
+    </div>
+
+    <div class="servicio-card reveal reveal-delay-1">
+      <div class="servicio-num">02</div>
+      <div class="servicio-icon">🏢</div>
+      <div class="servicio-title">Arquitectura &amp; Inmobiliarias</div>
+      <div class="servicio-desc">
+        Fotografía de proyectos residenciales y comerciales para inmobiliarias, constructoras y arquitectos. Imágenes que venden propiedades.
+      </div>
+      <div class="servicio-tags">
+        <span class="tag">Interior</span>
+        <span class="tag">Exterior</span>
+        <span class="tag">HDR</span>
+        <span class="tag">Dron</span>
+      </div>
+    </div>
+
+    <div class="servicio-card reveal reveal-delay-2">
+      <div class="servicio-num">03</div>
+      <div class="servicio-icon">📦</div>
+      <div class="servicio-title">Fotografía de Productos</div>
+      <div class="servicio-desc">
+        Imágenes limpias y consistentes para e-commerce, redes sociales y catálogos de marca. Fondo blanco o ambientado.
+      </div>
+      <div class="servicio-tags">
+        <span class="tag">E-commerce</span>
+        <span class="tag">RRSS</span>
+        <span class="tag">Catálogo</span>
+        <span class="tag">Pack</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SOBRE MÍ -->
+<section id="sobre">
+  <div class="section-header reveal">
+    <div class="section-label">03 — Sobre mí</div>
+    <h2 class="section-title">Detrás de <em>la cámara</em></h2>
+  </div>
+
+  <div class="sobre-layout">
+    <div class="sobre-foto reveal">
+      <!-- <img src="fotos/retrato.jpg" alt="Fotógrafo"> -->
+      <div class="sobre-foto-placeholder">
+        <span>📷</span>
+        <p>foto retrato aquí</p>
+      </div>
+    </div>
+
+    <div class="sobre-text reveal reveal-delay-1">
+      <h3>Fotografía con<br><em>intención</em></h3>
+      <p>
+        Soy fotógrafo basado en Santiago, Chile. Mi pasión empezó con los paisajes — la cordillera, la luz del atardecer, los cielos que cambian en segundos. Eso me enseñó a leer la luz y a esperar el momento.
+      </p>
+      <p>
+        Hoy aplico esa misma sensibilidad a proyectos comerciales: inmobiliarias que necesitan mostrar sus propiedades en su mejor versión, y marcas que quieren productos que se vean tan bien en pantalla como en persona.
+      </p>
+      <div class="sobre-datos">
+        <div class="sobre-dato">
+          <span>Ubicación</span>
+          <strong>Santiago, Chile</strong>
+        </div>
+        <div class="sobre-dato">
+          <span>Especialidad</span>
+          <strong>Paisajes · Arquitectura · Productos</strong>
+        </div>
+        <div class="sobre-dato">
+          <span>Empresa</span>
+          <strong>Sibatoc Group SpA</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto">
+  <div class="reveal">
+    <div class="section-label" style="justify-content:center; margin-bottom: 1.5rem;">04 — Contacto</div>
+    <h2 class="section-title" style="margin-bottom: 0.5rem;">¿Tienes un <em>proyecto</em>?</h2>
+    <p>Cuéntame qué necesitas. Respondo en menos de 4 horas.</p>
+
+    <div class="cta-group">
+      <a href="https://wa.me/56994955222?text=Hola,%20vi%20tu%20portfolio%20y%20me%20interesa%20cotizar%20fotografía" class="btn-primary" target="_blank">
+        <!-- Reemplaza 56XXXXXXXXX con tu número real -->
+        💬 &nbsp;Escribir por WhatsApp
+      </a>
+      <a href="mailto:contacto@sibatoc.cl" class="btn-secondary">
+        ✉️ &nbsp;Enviar un correo
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Sibatoc<span>.</span>Studio</div>
+  <a href="https://sibatoc.cl" class="footer-back">← Sibatoc Group SpA</a>
+  <div class="footer-copy">© <span id="year"></span> Sibatoc Group SpA</div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
