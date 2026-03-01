@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tesorería 6°B · Manquecura Ñuñoa</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f2547;
+    --blue: #1a4a8a;
+    --gold: #e8a020;
+    --gold-light: #f5c76a;
+    --cream: #faf8f4;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+    --card-bg: #ffffff;
+    --border: rgba(15,37,71,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Decorative background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -120px; right: -120px;
+    width: 450px; height: 450px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(26,74,138,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -80px; left: -80px;
+    width: 320px; height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,160,32,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Header badge */
+  .school-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--navy);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    animation: fadeDown 0.5s ease both;
+  }
+  .school-badge span { opacity: 0.6; }
+
+  /* Main card */
+  .card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 2.8rem 2.5rem 2.5rem;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 
+      0 1px 3px rgba(0,0,0,0.04),
+      0 8px 24px rgba(15,37,71,0.08),
+      0 32px 64px rgba(15,37,71,0.06);
+    border: 1px solid var(--border);
+    animation: fadeUp 0.6s ease 0.1s both;
+  }
+
+  .card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.8rem;
+    padding-bottom: 1.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .icon-box {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.4rem;
+    box-shadow: 0 4px 12px rgba(15,37,71,0.25);
+  }
+
+  .header-text h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.55rem;
+    color: var(--navy);
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+  }
+
+  .header-text p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* Feature pills */
+  .features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .feature-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.38rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    opacity: 0;
+    animation: fadeIn 0.4s ease forwards;
+  }
+  .feature-pill:nth-child(1) { animation-delay: 0.4s; }
+  .feature-pill:nth-child(2) { animation-delay: 0.5s; }
+  .feature-pill:nth-child(3) { animation-delay: 0.6s; }
+  .feature-pill:nth-child(4) { animation-delay: 0.7s; }
+  .feature-pill .dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 50%;
+  }
+
+  /* CTA Button */
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 16px rgba(15,37,71,0.25);
+    margin-bottom: 0.75rem;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15,37,71,0.35);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-primary svg { flex-shrink: 0; }
+
+  /* Warning box */
+  .warning-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 10px;
+    padding: 1rem 1.1rem;
+    margin-top: 1.25rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .warning-box .warn-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+  .warning-box p {
+    font-size: 0.82rem;
+    color: #92400e;
+    line-height: 1.5;
+  }
+  .warning-box strong { font-weight: 600; }
+
+  /* Incognito tip */
+  .tip-box {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+    margin-top: 0.75rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+  .tip-box .tip-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .tip-box p {
+    font-size: 0.82rem;
+    color: #0c4a6e;
+    line-height: 1.5;
+  }
+  .tip-box strong { font-weight: 600; }
+
+  /* Steps for incognito */
+  .steps {
+    display: none;
+    margin-top: 0.6rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid #7dd3fc;
+  }
+  .steps.visible { display: block; }
+  .steps ol {
+    list-style: none;
+    counter-reset: step;
+    padding: 0;
+  }
+  .steps ol li {
+    counter-increment: step;
+    font-size: 0.79rem;
+    color: #0c4a6e;
+    padding: 0.25rem 0 0.25rem 1.4rem;
+    position: relative;
+  }
+  .steps ol li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0.25rem;
+    width: 18px; height: 18px;
+    background: var(--navy);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.68rem;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .toggle-steps {
+    background: none;
+    border: none;
+    color: #0284c7;
+    font-size: 0.79rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 0.3rem;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 1.8rem;
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    animation: fadeIn 0.4s ease 0.8s both;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 2rem 1.5rem; }
+    .header-text h1 { font-size: 1.35rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="school-badge">
+  🏫 <span>Colegio Manquecura · Ñuñoa</span>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="icon-box">💰</div>
+    <div class="header-text">
+      <h1>Tesorería 6°B</h1>
+      <p>Gestión de cuotas y pagos del curso · 2025</p>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-pill"><span class="dot"></span> Consulta por nombre o RUT</div>
+    <div class="feature-pill"><span class="dot"></span> Estado de cuotas</div>
+    <div class="feature-pill"><span class="dot"></span> Datos bancarios</div>
+    <div class="feature-pill"><span class="dot"></span> Contacto directiva</div>
+  </div>
+
+  <a class="btn-primary" href="https://script.google.com/macros/s/AKfycbz4SnyyWx0X9I2mTkxIZp2aYZ56Nr5lAnM1gy8SaztNLWPW5Aa9v3sxBCtjd7NiDS8m/exec?authuser=0" target="_blank">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+    </svg>
+    Ingresar a la plataforma
+  </a>
+
+  <div class="warning-box">
+    <span class="warn-icon">⚠️</span>
+    <p>
+      <strong>¿Error al abrir?</strong> Si tienes varias cuentas Google en tu dispositivo, puede aparecer un error. 
+      Prueba el botón de arriba primero — debería resolverlo automáticamente.
+    </p>
+  </div>
+
+  <div class="tip-box">
+    <span class="tip-icon">🕵️</span>
+    <p>
+      <strong>Si el error persiste:</strong> abre el portal en modo incógnito con una sola cuenta Google.
+      <br>
+      <button class="toggle-steps" onclick="toggleSteps()">¿Cómo hacerlo? →</button>
+    </p>
+    <div class="steps" id="steps">
+      <ol>
+        <li>Abre Chrome y toca los 3 puntos (⋮) arriba a la derecha</li>
+        <li>Selecciona <em>"Nueva pestaña de incógnito"</em></li>
+        <li>Copia y pega el enlace de la plataforma en esa pestaña</li>
+        <li>Inicia sesión con tu cuenta Google personal</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  🔒 Requiere cuenta Google · Comparte este link con los apoderados del curso
+</div>
+
+<script>
+  // Agrega ?authuser=0 automáticamente al link del botón si falta
+  const btn = document.querySelector('.btn-primary');
+  const APP_URL = 'https://script.google.com/macros/s/AKfycbz4SnyyWx0X9I2mTkxIZp2aYZ56Nr5lAnM1gy8SaztNLWPW5Aa9v3sxBCtjd7NiDS8m/exec';
+  btn.href = APP_URL.includes('?') 
+    ? APP_URL + '&authuser=0' 
+    : APP_URL + '?authuser=0';
+
+  function toggleSteps() {
+    const steps = document.getElementById('steps');
+    const btn = document.querySelector('.toggle-steps');
+    steps.classList.toggle('visible');
+    btn.textContent = steps.classList.contains('visible') ? 'Ocultar pasos ↑' : '¿Cómo hacerlo? →';
+  }
+</script>
+</body>
+</html>
