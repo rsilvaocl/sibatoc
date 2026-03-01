@@ -359,8 +359,8 @@ const PRODUCTOS = [
   {id:100,nombre:"Bentley For Men Absolute",marca:"Bentley",familia:"Oriental/Amaderada",notas:"Cardamomo, cuero, s\u00e1ndalo, labdanum",intensidad:"Muy intenso",imagen:"img/foto-100.jpg",sizes:[{size:"5ml",price:2500,stock:15},{size:"10ml",price:5000,stock:8}]},
   {id:101,nombre:"Issey Miyake L'Eau d'Issey Pour Homme Intense",marca:"Issey Miyake",familia:"Floral/Amaderada",notas:"Iris, lavanda, pera, cedro",intensidad:"Intenso",imagen:"img/foto-101.jpg",sizes:[{size:"5ml",price:3000,stock:14},{size:"10ml",price:6000,stock:8}]},
 ];
-const WSP_NUMBER = '56XXXXXXXXX'; // ← Reemplaza con tu número
-const EMAIL = 'decants@sibatoc.cl'; // ← Reemplaza con tu correo
+const WSP_NUMBER = '56994955222'; // ← Reemplaza con tu número
+const EMAIL = 'tiendadecants@gmail.com'; // ← Reemplaza con tu correo
 
 let cart = [], filtroFamilia = '', filtroTexto = '';
 const fmtPrice = n => '$' + n.toLocaleString('es-CL');
@@ -498,7 +498,7 @@ function renderCart() {
   const lineas = cart.map(i => `• ${i.nombre} (${i.size}) x${i.qty} = ${fmtPrice(i.price * i.qty)}`).join('\n');
   const msg = encodeURIComponent(`Hola! Quiero hacer el siguiente pedido:\n\n${lineas}\n\nTotal estimado: ${fmtPrice(total)} CLP\n\n¿Cómo coordino el pago y envío?`);
   document.getElementById('btnWsp').href = `https://wa.me/${WSP_NUMBER}?text=${msg}`;
-  const subj = encodeURIComponent('Pedido Sibatoc Decants');
+  const subj = encodeURIComponent('Pedido Tienda Decants');
   const body = encodeURIComponent(`Hola,\n\nQuiero hacer el siguiente pedido:\n\n${lineas}\n\nTotal estimado: ${fmtPrice(total)} CLP\n\nQuedo atento/a a instrucciones de pago y envío.`);
   document.getElementById('btnEmail').href = `mailto:${EMAIL}?subject=${subj}&body=${body}`;
 }
