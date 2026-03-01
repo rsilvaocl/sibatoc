@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sibatoc Group SpA</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #38bdf8;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    header {
+      text-align: center;
+      padding: 4rem 1rem 2rem;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .section {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .about {
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 800px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 2rem;
+    }
+
+    .card {
+      background: var(--card);
+      padding: 2rem;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text);
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid #334155;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      border-color: var(--accent);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      border-top: 1px solid #1e293b;
+      margin-top: 4rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .legal {
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>SIBATOC GROUP SpA</h1>
+  <p>Soluciones digitales y comercio especializado</p>
+</header>
+
+<section class="section">
+  <h2>Quiénes Somos</h2>
+  <p class="about">
+    Sibatoc Group SpA es una empresa chilena orientada a la innovación digital,
+    automatización de procesos y comercio especializado. Operamos distintas
+    unidades de negocio con enfoque tecnológico y comercial.
+  </p>
+
+  <div class="legal">
+    Razón Social: Sibatoc Group SpA<br>
+    Inicio de actividades registrado ante el Servicio de Impuestos Internos (Chile)<br>
+    Santiago, Chile
+  </div>
+</section>
+
+<section class="section">
+  <h2>Nuestras Unidades</h2>
+
+  <div class="grid">
+
+    <a href="https://elhub.cl" class="card">
+      <h3>Elhub</h3>
+      <p>Micro-SaaS enfocado en automatización de flujos de atención, conexión con clientes y optimización digital para pymes.</p>
+    </a>
+
+    <a href="https://tudominio-perfumes.cl" class="card">
+      <h3>Sibatoc Fragrances</h3>
+      <p>Comercio especializado en perfumes nicho y decants con enfoque en experiencia personalizada.</p>
+    </a>
+
+    <a href="https://tudominio-fotografia.cl" class="card">
+      <h3>Sibatoc Studio</h3>
+      <p>Servicios fotográficos profesionales para eventos, portafolio personal y proyectos comerciales.</p>
+    </a>
+
+    <a href="https://tudominio-it.cl" class="card">
+      <h3>Sibatoc Tech</h3>
+      <p>Servicios informáticos, automatización y soluciones tecnológicas para organizaciones.</p>
+    </a>
+
+  </div>
+</section>
+
+<footer>
+  © <span id="year"></span> Sibatoc Group SpA · Todos los derechos reservados
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>
