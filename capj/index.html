@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETL Identidades - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans min-h-screen p-6">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="bg-white shadow-sm rounded-xl p-6 mb-6 flex justify-between items-center border-l-4 border-blue-600">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">ID-Governance & Compliance</h1>
+                <p class="text-sm text-gray-500 mt-1">Pipeline ETL con DuckDB: Archivos Raw -> Silver (Parquet) -> Gold (Cruce)</p>
+            </div>
+            <div class="text-right">
+                <span class="text-xs font-semibold bg-blue-100 text-blue-800 py-1 px-3 rounded-full">Estado del Sistema: Online</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-1 bg-white shadow-sm rounded-xl p-6">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">1. Capa Bronze (Archivos Origen)</h2>
+                <form id="uploadForm" class="space-y-4">
+                    
+                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Correo (.csv/.xlsx)</label>
+                        <input type="file" id="fileCorreo" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
+                    </div>
+
+                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">RRHH (.csv/.xlsx)</label>
+                        <input type="file" id="fileRrhh" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
+                    </div>
+
+                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Active Directory (.csv/.xlsx)</label>
+                        <input type="file" id="fileAd" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
+                    </div>
+
+                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Entra ID (.csv/.xlsx)</label>
+                        <input type="file" id="fileEntra" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
+                    </div>
+
+                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Mesa de Ayuda (.csv/.xlsx)</label>
+                        <input type="file" id="fileMesaAyuda" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
+                    </div>
+                </form>
+            </div>
+
+            <div class="lg:col-span-2 space-y-6">
+                
+                <div class="bg-white shadow-sm rounded-xl p-6 border-l-4 border-gray-400" id="cardSilver">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-700">2. Procesamiento Silver (Crear .parquet)</h2>
+                        <button id="btnSilver" class="bg-gray-800 hover:bg-gray-900 text-white text-sm font-semibold py-2 px-4 rounded shadow transition">
+                            <i class="fas fa-cogs mr-2"></i>Generar Capa Silver
+                        </button>
+                    </div>
+                    
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                        <div id="progressSilver" class="bg-gray-800 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs text-center">
+                        <div id="statusCorreo" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>Correo</div>
+                        <div id="statusRrhh" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>RRHH</div>
+                        <div id="statusAd" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>AD</div>
+                        <div id="statusEntra" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>Entra ID</div>
+                        <div id="statusMesa" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>Mesa Ayuda</div>
+                    </div>
+                </div>
+
+                <div class="bg-white shadow-sm rounded-xl p-6 border-l-4 border-yellow-400 opacity-60 pointer-events-none transition-all duration-300" id="cardGold">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold text-gray-700">3. Capa Gold (Cruce y Recomendaciones)</h2>
+                        <button id="btnGold" class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-2 px-4 rounded shadow transition">
+                            <i class="fas fa-bolt mr-2"></i>Consolidar y Evaluar
+                        </button>
+                    </div>
+                    
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+                        <div id="progressGold" class="bg-yellow-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <p id="msgGold" class="text-sm text-gray-600 hidden">Cruzando DataFrames con DuckDB...</p>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="resultados" class="hidden mt-6 bg-white shadow-sm rounded-xl p-6 border-t-4 border-green-500">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">Resultados y Acciones Recomendadas</h2>
+                <button class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded shadow">
+                    <i class="fas fa-download mr-2"></i>Exportar CSV
+                </button>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white rounded-md overflow-hidden">
+                    <thead class="bg-gray-50 text-gray-700 border-b">
+                        <tr>
+                            <th class="py-3 px-4 text-left text-sm font-semibold">SamAccountName</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold">Estado RRHH</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold">Licencia M365</th>
+                            <th class="py-3 px-4 text-left text-sm font-semibold">Acción Recomendada</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaResultados" class="text-gray-600 text-sm">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lógica de UI para simular el proceso de dos pasos
+
+        // --- PASO 1: SILVER ---
+        document.getElementById('btnSilver').addEventListener('click', async function() {
+            // Validar que los archivos estén cargados (simplificado para el ejemplo)
+            const form = document.getElementById('uploadForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Procesando...';
+            
+            // Simular barra de progreso y cambio de estado de archivos
+            const progress = document.getElementById('progressSilver');
+            const statuses = ['statusCorreo', 'statusRrhh', 'statusAd', 'statusEntra', 'statusMesa'];
+            
+            progress.style.width = '20%';
+            
+            // Simulación de respuesta del Backend para la capa Silver
+            for (let i = 0; i < statuses.length; i++) {
+                await new Promise(r => setTimeout(r, 600)); // Simula tiempo de conversión a Parquet
+                progress.style.width = `${(i + 1) * 20}%`;
+                
+                const el = document.getElementById(statuses[i]);
+                el.classList.remove('bg-gray-50', 'text-gray-500');
+                el.classList.add('bg-green-50', 'text-green-700', 'font-semibold');
+                el.innerHTML = `<i class="fas fa-check-circle mb-1 block text-lg"></i>${el.innerText}`;
+            }
+
+            btn.innerHTML = '<i class="fas fa-check mr-2"></i>Silver Completado';
+            
+            // Desbloquear la tarjeta Gold
+            const cardGold = document.getElementById('cardGold');
+            cardGold.classList.remove('opacity-60', 'pointer-events-none');
+            cardGold.classList.add('border-yellow-500');
+        });
+
+        // --- PASO 2: GOLD ---
+        document.getElementById('btnGold').addEventListener('click', async function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Cruzando Datos...';
+            document.getElementById('msgGold').classList.remove('hidden');
+            
+            const progress = document.getElementById('progressGold');
+            progress.style.width = '50%';
+            
+            // Simular tiempo de query en DuckDB
+            await new Promise(r => setTimeout(r, 1500));
+            progress.style.width = '100%';
+            document.getElementById('msgGold').innerText = "Cruce exitoso. Generando tabla de acciones...";
+
+            await new Promise(r => setTimeout(r, 500));
+            
+            // Mostrar resultados simulados
+            btn.innerHTML = '<i class="fas fa-check mr-2"></i>Consolidado';
+            document.getElementById('resultados').classList.remove('hidden');
+
+            const data = [
+                { user: 'jperez', rrhh: 'Desvinculado', m365: 'E3 Asignada', accion: 'Quitar licencia y Deshabilitar AD' },
+                { user: 'mlopez', rrhh: 'Vigente', m365: 'Sin Licencia', accion: 'Asignar Licencia' },
+                { user: 'asanchez', rrhh: 'Vigente', m365: 'E3 Asignada', accion: 'Mantener' }
+            ];
+
+            const tabla = document.getElementById('tablaResultados');
+            tabla.innerHTML = '';
+            
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b hover:bg-blue-50 transition";
+                
+                let textColor = 'text-gray-800';
+                if (row.accion.includes('Quitar') || row.accion.includes('Deshabilitar')) textColor = 'text-red-600 font-bold';
+                else if (row.accion.includes('Asignar')) textColor = 'text-blue-600 font-semibold';
+                else textColor = 'text-green-600';
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800 font-medium">${row.user}</td>
+                    <td class="py-3 px-4 ${row.rrhh === 'Desvinculado' ? 'text-red-500' : 'text-green-500'}">${row.rrhh}</td>
+                    <td class="py-3 px-4">${row.m365}</td>
+                    <td class="py-3 px-4 ${textColor}">${row.accion}</td>
+                `;
+                tabla.appendChild(tr);
+            });
+        });
+    </script>
+</body>
+</html>
