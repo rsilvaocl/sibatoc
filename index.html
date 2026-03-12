@@ -1,212 +1,482 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ETL Identidades - Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sibatoc Group SpA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #050608;
+      --surface: #0c0d10;
+      --surface2: #13141a;
+      --border: rgba(255,255,255,0.06);
+      --border-bright: rgba(255,255,255,0.12);
+      --text: #e8eaf0;
+      --muted: #6b7280;
+      --muted2: #9ca3af;
+      --accent: #00e5ff;
+      --accent2: #7c3aed;
+      --green: #00ff88;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'IBM Plex Sans', sans-serif;
+      background: var(--black);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.4;
+    }
+
+    .grid-bg {
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
+    .orb-1 { width: 500px; height: 500px; background: rgba(0,229,255,0.04); top: -150px; right: -100px; }
+    .orb-2 { width: 400px; height: 400px; background: rgba(124,58,237,0.05); bottom: 10%; left: -100px; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 3rem;
+      background: rgba(5,6,8,0.75);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 0.65rem; }
+    .nav-logo-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 1.1rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--text);
+    }
+    .nav-logo-text span { color: var(--accent); }
+    .nav-logo-icon {
+      width: 30px; height: 30px;
+      background: var(--accent);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 800;
+      font-family: 'Barlow Condensed', sans-serif;
+      color: var(--black);
+      letter-spacing: 0.05em;
+    }
+    .nav-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; color: var(--muted); letter-spacing: 0.05em;
+    }
+    .nav-status {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; color: var(--green);
+    }
+    .status-dot {
+      width: 6px; height: 6px;
+      background: var(--green); border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    /* HERO */
+    .hero {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 8rem 3rem 4rem;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; color: var(--accent);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 2rem;
+      opacity: 0; animation: slideUp 0.6s ease 0.2s forwards;
+    }
+    .hero-eyebrow::before {
+      content: ''; display: block; width: 30px; height: 1px; background: var(--accent);
+    }
+    .hero-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: clamp(3.8rem, 9vw, 8rem);
+      line-height: 0.92; letter-spacing: 0.02em; text-transform: uppercase;
+      color: var(--text); margin-bottom: 1.5rem;
+      opacity: 0; animation: slideUp 0.7s ease 0.35s forwards;
+    }
+    .hero-title .accent-line {
+      display: block; color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.18);
+      position: relative;
+    }
+    .hero-title .accent-line::after {
+      content: attr(data-text);
+      position: absolute; left: 0; top: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      clip-path: inset(0 60% 0 0);
+      animation: revealText 1.2s ease 0.9s forwards;
+    }
+    @keyframes revealText { to { clip-path: inset(0 0% 0 0); } }
+
+    .hero-sub {
+      font-size: 1rem; color: var(--muted2); line-height: 1.75;
+      max-width: 520px; font-weight: 300;
+      opacity: 0; animation: slideUp 0.7s ease 0.5s forwards;
+    }
+    .hero-divider {
+      width: 100%; height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      margin: 2.5rem 0;
+      opacity: 0; animation: slideUp 0.5s ease 0.7s forwards;
+    }
+    .hero-meta {
+      display: flex; gap: 2.5rem; flex-wrap: wrap;
+      opacity: 0; animation: slideUp 0.5s ease 0.85s forwards;
+    }
+    .meta-item {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem; color: var(--muted); letter-spacing: 0.04em;
+    }
+    .meta-item span {
+      display: block; font-size: 0.63rem; color: var(--muted);
+      margin-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .meta-item strong { color: var(--muted2); font-weight: 500; }
+
+    /* SECTIONS */
+    .section {
+      position: relative; z-index: 1;
+      max-width: 1200px; margin: 0 auto; padding: 5rem 3rem;
+    }
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem; color: var(--accent);
+      letter-spacing: 0.15em; text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .section-label::before {
+      content: ''; display: block; width: 20px; height: 1px; background: var(--accent);
+    }
+    .section-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: clamp(2rem, 4vw, 3rem);
+      line-height: 1.05; letter-spacing: 0.02em; text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .about-text {
+      font-size: 1rem; color: var(--muted2); line-height: 1.8;
+      max-width: 680px; font-weight: 300; margin-bottom: 2rem;
+    }
+    .legal-block {
+      display: inline-flex; flex-direction: column; gap: 0.3rem;
+      padding: 1rem 1.4rem;
+      border: 1px solid var(--border-bright);
+      border-left: 2px solid var(--accent);
+      background: rgba(0,229,255,0.03);
+      border-radius: 0 8px 8px 0;
+    }
+    .legal-block p {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.73rem; color: var(--muted2); line-height: 1.6;
+    }
+    .legal-block p strong { color: var(--accent); font-weight: 500; }
+
+    /* UNITS GRID */
+    .units-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden; margin-top: 2.5rem;
+    }
+    .unit-card {
+      background: var(--surface); padding: 2rem;
+      text-decoration: none; color: var(--text);
+      position: relative; transition: background 0.3s ease;
+      display: flex; flex-direction: column; overflow: hidden;
+    }
+    .unit-card.active { cursor: pointer; }
+    .unit-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    .unit-card.active:hover { background: var(--surface2); }
+    .unit-card.active:hover::before { opacity: 1; }
+    .unit-card-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 1.2rem;
+    }
+    .unit-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-bright);
+    }
+    .unit-icon-img {
+      width: 40px; height: 40px; border-radius: 10px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-bright);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .unit-icon-img img {
+      width: 100%; height: 100%; object-fit: contain;
+      padding: 4px;
+      filter: brightness(0) invert(1); opacity: 0.7;
+    }
+    .unit-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.6rem; padding: 0.2rem 0.55rem;
+      border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .badge-live { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
+    .badge-dev  { background: rgba(0,229,255,0.08); color: var(--accent); border: 1px solid rgba(0,229,255,0.15); }
+    .badge-coming { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border-bright); }
+
+    .unit-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 1.3rem;
+      margin-bottom: 0.4rem; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .unit-desc {
+      font-size: 0.86rem; color: var(--muted2);
+      line-height: 1.6; font-weight: 300; flex: 1;
+    }
+    .unit-link {
+      display: flex; align-items: center; gap: 0.4rem;
+      margin-top: 1.2rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem; color: var(--accent); letter-spacing: 0.04em;
+      opacity: 0; transform: translateX(-4px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .unit-card.active:hover .unit-link { opacity: 1; transform: translateX(0); }
+    .unit-link::after { content: '→'; }
+
+    /* FOOTER */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 2rem 3rem;
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+    }
+    .footer-left { display: flex; align-items: center; gap: 0.6rem; }
+    .footer-left-icon {
+      width: 22px; height: 22px;
+      background: var(--muted);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.6rem; font-weight: 800;
+      font-family: 'Barlow Condensed', sans-serif;
+      color: var(--black); opacity: 0.5;
+    }
+    .footer-left-text {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700; font-size: 0.9rem;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+    }
+    .footer-left-text span { color: var(--accent); }
+    .footer-right {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.67rem; color: var(--muted); text-align: right;
+    }
+
+    /* ANIMATIONS */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      nav { padding: 0.9rem 1.5rem; }
+      .nav-tag { display: none; }
+      .hero { padding: 6.5rem 1.5rem 3rem; }
+      .section { padding: 3.5rem 1.5rem; }
+      .hero-meta { gap: 1.5rem; }
+      footer { padding: 1.8rem 1.5rem; flex-direction: column; align-items: flex-start; }
+      .footer-right { text-align: left; }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans min-h-screen p-6">
+<body>
 
-    <div class="max-w-6xl mx-auto">
-        <header class="bg-white shadow-sm rounded-xl p-6 mb-6 flex justify-between items-center border-l-4 border-blue-600">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800">ID-Governance & Compliance</h1>
-                <p class="text-sm text-gray-500 mt-1">Pipeline ETL con DuckDB: Archivos Raw -> Silver (Parquet) -> Gold (Cruce)</p>
-            </div>
-            <div class="text-right">
-                <span class="text-xs font-semibold bg-blue-100 text-blue-800 py-1 px-3 rounded-full">Estado del Sistema: Online</span>
-            </div>
-        </header>
+<div class="grid-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <div class="lg:col-span-1 bg-white shadow-sm rounded-xl p-6">
-                <h2 class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">1. Capa Bronze (Archivos Origen)</h2>
-                <form id="uploadForm" class="space-y-4">
-                    
-                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Correo (.csv/.xlsx)</label>
-                        <input type="file" id="fileCorreo" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
-                    </div>
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="logo_sibatoc.png" alt="Logo Sibatoc" style="width: 60px;">
+  </div>
+  
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    Operativo
+  </div>
+</nav>
 
-                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">RRHH (.csv/.xlsx)</label>
-                        <input type="file" id="fileRrhh" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
-                    </div>
-
-                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Active Directory (.csv/.xlsx)</label>
-                        <input type="file" id="fileAd" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
-                    </div>
-
-                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Entra ID (.csv/.xlsx)</label>
-                        <input type="file" id="fileEntra" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
-                    </div>
-
-                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Mesa de Ayuda (.csv/.xlsx)</label>
-                        <input type="file" id="fileMesaAyuda" required class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-blue-50 file:text-blue-700">
-                    </div>
-                </form>
-            </div>
-
-            <div class="lg:col-span-2 space-y-6">
-                
-                <div class="bg-white shadow-sm rounded-xl p-6 border-l-4 border-gray-400" id="cardSilver">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-semibold text-gray-700">2. Procesamiento Silver (Crear .parquet)</h2>
-                        <button id="btnSilver" class="bg-gray-800 hover:bg-gray-900 text-white text-sm font-semibold py-2 px-4 rounded shadow transition">
-                            <i class="fas fa-cogs mr-2"></i>Generar Capa Silver
-                        </button>
-                    </div>
-                    
-                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-                        <div id="progressSilver" class="bg-gray-800 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs text-center">
-                        <div id="statusCorreo" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>Correo</div>
-                        <div id="statusRrhh" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>RRHH</div>
-                        <div id="statusAd" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>AD</div>
-                        <div id="statusEntra" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>Entra ID</div>
-                        <div id="statusMesa" class="p-2 rounded bg-gray-50 text-gray-500"><i class="fas fa-clock mb-1 block text-lg"></i>Mesa Ayuda</div>
-                    </div>
-                </div>
-
-                <div class="bg-white shadow-sm rounded-xl p-6 border-l-4 border-yellow-400 opacity-60 pointer-events-none transition-all duration-300" id="cardGold">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-semibold text-gray-700">3. Capa Gold (Cruce y Recomendaciones)</h2>
-                        <button id="btnGold" class="bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-semibold py-2 px-4 rounded shadow transition">
-                            <i class="fas fa-bolt mr-2"></i>Consolidar y Evaluar
-                        </button>
-                    </div>
-                    
-                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
-                        <div id="progressGold" class="bg-yellow-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
-                    </div>
-                    <p id="msgGold" class="text-sm text-gray-600 hidden">Cruzando DataFrames con DuckDB...</p>
-                </div>
-
-            </div>
-        </div>
-
-        <div id="resultados" class="hidden mt-6 bg-white shadow-sm rounded-xl p-6 border-t-4 border-green-500">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-gray-800">Resultados y Acciones Recomendadas</h2>
-                <button class="bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2 px-4 rounded shadow">
-                    <i class="fas fa-download mr-2"></i>Exportar CSV
-                </button>
-            </div>
-            
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white rounded-md overflow-hidden">
-                    <thead class="bg-gray-50 text-gray-700 border-b">
-                        <tr>
-                            <th class="py-3 px-4 text-left text-sm font-semibold">SamAccountName</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold">Estado RRHH</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold">Licencia M365</th>
-                            <th class="py-3 px-4 text-left text-sm font-semibold">Acción Recomendada</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaResultados" class="text-gray-600 text-sm">
-                        </tbody>
-                </table>
-            </div>
-        </div>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Empresa digital · Santiago, Chile</div>
+  <h1 class="hero-title">
+    Sibatoc<br>
+    <span class="accent-line" data-text="Group SpA">Group SpA</span>
+  </h1>
+  <p class="hero-sub">
+    Iniciativas digitales y comercio especializado con foco en tecnología aplicada y experiencias reales. Proyectos propios con visión de largo plazo.
+  </p>
+  <div class="hero-divider"></div>
+  <div class="hero-meta">
+    <div class="meta-item">
+      <span>Razón Social</span>
+      <strong>Sibatoc Group SpA</strong>
     </div>
+    <div class="meta-item">
+      <span>Registro</span>
+      <strong>SII · Chile</strong>
+    </div>
+    <div class="meta-item">
+      <span>Ubicación</span>
+      <strong>Santiago, Chile</strong>
+    </div>
+    <div class="meta-item">
+      <span>Proyectos activos</span>
+      <strong>4 en producción</strong>
+    </div>
+  </div>
+</div>
 
-    <script>
-        // Lógica de UI para simular el proceso de dos pasos
+<!-- ABOUT -->
+<section class="section">
+  <div class="reveal">
+    <div class="section-label">Quiénes Somos</div>
+    <h2 class="section-title">Iniciativas con<br>propósito real</h2>
+    <p class="about-text">
+      Sibatoc Group SpA es una empresa chilena que agrupa distintas iniciativas digitales y comerciales. Desarrollamos herramientas propias, ofrecemos servicios especializados y exploramos nuevos mercados con enfoque práctico y directo.
+    </p>
+    <div class="legal-block">
+      <p><strong>Razón Social:</strong> Sibatoc Group SpA</p>
+      <p><strong>Registro:</strong> Inicio de actividades ante el Servicio de Impuestos Internos (Chile)</p>
+      <p><strong>Domicilio:</strong> Santiago, Región Metropolitana, Chile</p>
+    </div>
+  </div>
+</section>
 
-        // --- PASO 1: SILVER ---
-        document.getElementById('btnSilver').addEventListener('click', async function() {
-            // Validar que los archivos estén cargados (simplificado para el ejemplo)
-            const form = document.getElementById('uploadForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
+<!-- UNITS -->
+<section class="section" style="padding-top: 0;">
+  <div class="reveal">
+    <div class="section-label">Proyectos e Iniciativas</div>
+    <h2 class="section-title">Lo que<br>hacemos</h2>
+  </div>
 
-            const btn = this;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Procesando...';
-            
-            // Simular barra de progreso y cambio de estado de archivos
-            const progress = document.getElementById('progressSilver');
-            const statuses = ['statusCorreo', 'statusRrhh', 'statusAd', 'statusEntra', 'statusMesa'];
-            
-            progress.style.width = '20%';
-            
-            // Simulación de respuesta del Backend para la capa Silver
-            for (let i = 0; i < statuses.length; i++) {
-                await new Promise(r => setTimeout(r, 600)); // Simula tiempo de conversión a Parquet
-                progress.style.width = `${(i + 1) * 20}%`;
-                
-                const el = document.getElementById(statuses[i]);
-                el.classList.remove('bg-gray-50', 'text-gray-500');
-                el.classList.add('bg-green-50', 'text-green-700', 'font-semibold');
-                el.innerHTML = `<i class="fas fa-check-circle mb-1 block text-lg"></i>${el.innerText}`;
-            }
+  <div class="units-grid reveal">
 
-            btn.innerHTML = '<i class="fas fa-check mr-2"></i>Silver Completado';
-            
-            // Desbloquear la tarjeta Gold
-            const cardGold = document.getElementById('cardGold');
-            cardGold.classList.remove('opacity-60', 'pointer-events-none');
-            cardGold.classList.add('border-yellow-500');
-        });
+    <!-- ElHub — LIVE -->
+    <a href="https://elhub.cl" class="unit-card active" target="_blank" rel="noopener">
+      <div class="unit-card-header">
+        <div class="unit-icon">⚡</div>
+        <div class="unit-badge badge-live">Live</div>
+      </div>
+      <div class="unit-name">Elhub</div>
+      <div class="unit-desc">
+        Micro-SaaS para automatización de flujos de atención y optimización digital para pymes. Conecta clientes y simplifica procesos.
+      </div>
+      <div class="unit-link">elhub.cl</div>
+    </a>
 
-        // --- PASO 2: GOLD ---
-        document.getElementById('btnGold').addEventListener('click', async function() {
-            const btn = this;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Cruzando Datos...';
-            document.getElementById('msgGold').classList.remove('hidden');
-            
-            const progress = document.getElementById('progressGold');
-            progress.style.width = '50%';
-            
-            // Simular tiempo de query en DuckDB
-            await new Promise(r => setTimeout(r, 1500));
-            progress.style.width = '100%';
-            document.getElementById('msgGold').innerText = "Cruce exitoso. Generando tabla de acciones...";
+    <!-- Tesoreria App — LIVE -->
+    <a href="https://script.google.com/macros/s/AKfycbz4SnyyWx0X9I2mTkxIZp2aYZ56Nr5lAnM1gy8SaztNLWPW5Aa9v3sxBCtjd7NiDS8m/exec?authuser=0" class="unit-card active" target="_blank" rel="noopener">
+      <div class="unit-card-header">
+        <div class="unit-icon">📊</div>
+        <div class="unit-badge badge-live">Live</div>
+      </div>
+      <div class="unit-name">Tesorería App</div>
+      <div class="unit-desc">
+        Sistema de gestión de tesorería escolar sobre Google Apps Script. Registro de pagos para directivas y consulta de cuotas para apoderados.
+      </div>
+      <div class="unit-link">Abrir aplicación</div>
+    </a>
 
-            await new Promise(r => setTimeout(r, 500));
-            
-            // Mostrar resultados simulados
-            btn.innerHTML = '<i class="fas fa-check mr-2"></i>Consolidado';
-            document.getElementById('resultados').classList.remove('hidden');
+    <!-- Tienda de Decants — LIVE -->
+    <a href="https://www.sibatoc.cl/perfumes/" class="unit-card active" target="_blank" rel="noopener">
+      <div class="unit-card-header">
+        <div class="unit-icon">🌿</div>
+        <div class="unit-badge badge-live">Live</div>
+      </div>
+      <div class="unit-name">Tienda de Decants</div>
+      <div class="unit-desc">
+        Tienda de perfumes nicho y decants en 2ml, 5ml y 10ml. Carrito directo a WhatsApp con envío a todo Chile.
+      </div>
+      <div class="unit-link">Ver tienda</div>
+    </a>
 
-            const data = [
-                { user: 'jperez', rrhh: 'Desvinculado', m365: 'E3 Asignada', accion: 'Quitar licencia y Deshabilitar AD' },
-                { user: 'mlopez', rrhh: 'Vigente', m365: 'Sin Licencia', accion: 'Asignar Licencia' },
-                { user: 'asanchez', rrhh: 'Vigente', m365: 'E3 Asignada', accion: 'Mantener' }
-            ];
+    <!-- Sibatoc Studio — LIVE -->
+    <a href="https://www.sibatoc.cl/fotografia/" class="unit-card active" target="_blank" rel="noopener">
+      <div class="unit-card-header">
+        <div class="unit-icon">📷</div>
+        <div class="unit-badge badge-live">Live</div>
+      </div>
+      <div class="unit-name">Sibatoc Studio</div>
+      <div class="unit-desc">
+        Portfolio fotográfico profesional: paisajes, fotografía de productos y arquitectura para inmobiliarias. Basado en Santiago.
+      </div>
+      <div class="unit-link">Ver portfolio</div>
+    </a>
 
-            const tabla = document.getElementById('tablaResultados');
-            tabla.innerHTML = '';
-            
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.className = "border-b hover:bg-blue-50 transition";
-                
-                let textColor = 'text-gray-800';
-                if (row.accion.includes('Quitar') || row.accion.includes('Deshabilitar')) textColor = 'text-red-600 font-bold';
-                else if (row.accion.includes('Asignar')) textColor = 'text-blue-600 font-semibold';
-                else textColor = 'text-green-600';
+  </div>
+</section>
 
-                tr.innerHTML = `
-                    <td class="py-3 px-4 text-gray-800 font-medium">${row.user}</td>
-                    <td class="py-3 px-4 ${row.rrhh === 'Desvinculado' ? 'text-red-500' : 'text-green-500'}">${row.rrhh}</td>
-                    <td class="py-3 px-4">${row.m365}</td>
-                    <td class="py-3 px-4 ${textColor}">${row.accion}</td>
-                `;
-                tabla.appendChild(tr);
-            });
-        });
-    </script>
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <img src="logo_sibatoc.png" alt="Logo Sibatoc" style="width: 50px;">
+  </div>
+  <div class="footer-right">
+    © <span id="year"></span> Sibatoc Group SpA · Todos los derechos reservados<br>
+    Santiago, Chile
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
 </body>
 </html>
