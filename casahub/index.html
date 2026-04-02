@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Hub — El Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0077b6;
+            --secondary: #00b4d8;
+            --warning: #ffb703;
+            --danger: #e63946;
+            --success: #2d9e68;
+            --purple: #7c3aed;
+            --purple-light: #ede9fe;
+            --bg: #f0f4f8;
+            --text: #2d3436;
+            --muted: #718096;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 20px;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container { max-width: 1000px; margin: auto; }
+
+        /* ─── HEADER ─── */
+        header {
+            background: linear-gradient(135deg, #0077b6 0%, #0096c7 55%, #00b4d8 100%);
+            color: white;
+            padding: 28px 30px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 30px rgba(0,119,182,0.25);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        header::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 180px; height: 180px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+        }
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: -30px; left: -30px;
+            width: 120px; height: 120px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+        }
+        header h1 { margin: 0 0 4px; font-size: 1.7em; font-weight: 700; position: relative; }
+        header p { margin: 0; opacity: 0.8; font-size: 0.88em; position: relative; }
+
+        /* ─── TAB NAV ─── */
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 22px;
+            background: white;
+            padding: 6px;
+            border-radius: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+            border: 1px solid var(--border);
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 11px 16px;
+            border: none;
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--muted);
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+        }
+        .tab-btn:hover { background: #f7fafc; color: var(--text); }
+        .tab-btn.active-pool {
+            background: linear-gradient(135deg, #0077b6, #00b4d8);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,119,182,0.3);
+        }
+        .tab-btn.active-servi {
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: white;
+            box-shadow: 0 4px 12px rgba(124,58,237,0.3);
+        }
+
+        /* ─── TAB PANELS ─── */
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+        /* ─── CARDS ─── */
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+        h2 {
+            color: var(--primary);
+            font-size: 1.05em;
+            font-weight: 700;
+            border-left: 5px solid var(--secondary);
+            padding-left: 14px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        h2.purple {
+            color: var(--purple);
+            border-left-color: #a855f7;
+        }
+
+        /* ─── EXPIRY BADGES ─── */
+        #expiryBar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+        .badge { display: flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 30px; font-size: 0.8em; font-weight: 700; border: 2px solid transparent; transition: transform 0.15s; }
+        .badge:hover { transform: translateY(-1px); }
+        .badge-ok     { background: #d4f5e5; color: #1a7a4a; border-color: #a3e6c4; }
+        .badge-warn   { background: #fff3cd; color: #856404; border-color: #ffc107; }
+        .badge-danger { background: #ffe0e3; color: #c0392b; border-color: #f5c6cb; }
+        .badge-none   { background: #f1f5f9; color: #718096; border-color: #e2e8f0; }
+
+        /* ─── SEASON NAV ─── */
+        .season-nav { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .btn-s { padding: 11px 22px; border: none; border-radius: 30px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 700; transition: 0.25s; border: 2px solid transparent; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85em; }
+        .btn-summer { background: #ffe5d9; color: #fb8500; border-color: #fb8500; }
+        .btn-winter { background: #e0f2f1; color: var(--primary); border-color: var(--primary); }
+        .active-summer { background: #fb8500 !important; color: white !important; box-shadow: 0 4px 15px rgba(251,133,0,0.3); }
+        .active-winter { background: var(--primary) !important; color: white !important; box-shadow: 0 4px 15px rgba(0,119,182,0.3); }
+
+        .alert-gold { background: #fff8e1; border-left: 6px solid #ffc107; padding: 13px 17px; margin-bottom: 22px; font-weight: 700; border-radius: 10px; color: #7a5500; font-size: 0.9em; }
+
+        /* ─── ACCORDEON ─── */
+        details { border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; }
+        summary { padding: 14px; cursor: pointer; font-weight: 700; color: var(--primary); background: #fdfdfd; outline: none; list-style: none; display: flex; justify-content: space-between; border-radius: 10px; }
+        summary::-webkit-details-marker { display: none; }
+        summary::after { content: "➕"; font-size: 0.8em; }
+        details[open] summary::after { content: "➖"; }
+        details[open] summary { background: #f0f7fc; border-bottom: 1px solid var(--border); border-radius: 10px 10px 0 0; }
+        .content { padding: 20px; }
+        .step-item { margin-bottom: 14px; display: flex; align-items: flex-start; }
+        .step-num { background: var(--primary); color: white; width: 27px; height: 27px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.82em; font-weight: 700; margin-right: 13px; flex-shrink: 0; margin-top: 2px; }
+        .step-text b { color: #000; font-weight: 800; }
+        .timer-box { background: #1e272e; color: #dfe6e9; padding: 18px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.86em; line-height: 1.9; }
+        .t-btn { color: #55efc4; font-weight: bold; }
+
+        /* ─── CHECKLIST ─── */
+        .task-list { margin-top: 8px; }
+        .task-item { display: flex; align-items: center; padding: 11px; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: background 0.15s; border-radius: 6px; }
+        .task-item:hover { background: #f7fafc; }
+        .task-item input[type="checkbox"] { width: 17px; height: 17px; margin-right: 13px; cursor: pointer; accent-color: var(--primary); }
+        .task-item.done span { text-decoration: line-through; color: #a0aec0; }
+
+        /* ─── TABLES / GRID ─── */
+        .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.87em; }
+        th, td { padding: 10px 12px; border: 1px solid var(--border); text-align: left; }
+        th { background: #f7fafc; color: var(--primary); font-weight: 700; }
+        tr:hover td { background: #fafcff; }
+
+        /* ─── CALCULADORA ─── */
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .calc-field label { display: block; font-size: 0.78em; font-weight: 700; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .calc-field input {
+            width: 100%; padding: 10px 13px; border: 2px solid var(--border);
+            border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.93em;
+            color: var(--text); outline: none; transition: border-color 0.2s;
+        }
+        .calc-field input:focus { border-color: var(--secondary); }
+        .btn-calc { width: 100%; padding: 11px; background: var(--primary); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.93em; cursor: pointer; margin-top: 14px; transition: background 0.2s, transform 0.1s; }
+        .btn-calc:hover { background: #005f93; transform: translateY(-1px); }
+        #calcResult { margin-top: 14px; padding: 15px; border-radius: 10px; font-weight: 700; display: none; animation: fadeIn 0.3s ease; }
+        .result-ok      { background: #d4f5e5; color: #1a7a4a; border: 2px solid #a3e6c4; }
+        .result-low     { background: #e8f4ff; color: #0077b6; border: 2px solid #bee3f8; }
+        .result-high    { background: #fff3cd; color: #856404; border: 2px solid #ffc107; }
+        .result-extreme { background: #ffe0e3; color: #c0392b; border: 2px solid #f5c6cb; }
+
+        /* ─── LOG POOL ─── */
+        .log-form { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 14px; }
+        .log-form input, .log-form select {
+            padding: 9px 11px; border: 2px solid var(--border); border-radius: 8px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.86em; outline: none; transition: border-color 0.2s;
+        }
+        .log-form input:focus, .log-form select:focus { border-color: var(--secondary); }
+        .log-form input[type="date"] { flex: 0 0 135px; }
+        .log-form select { flex: 1 1 155px; }
+        .log-form input[type="text"] { flex: 2 1 180px; }
+        .btn-log { padding: 9px 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.2s; font-size: 0.88em; }
+        .btn-log:hover { background: #005f93; }
+        .log-list { max-height: 250px; overflow-y: auto; }
+        .log-entry { display: flex; align-items: center; gap: 10px; padding: 10px 13px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 7px; background: #fdfdfd; animation: fadeIn 0.3s ease; }
+        .log-date { font-family: 'JetBrains Mono', monospace; font-size: 0.76em; color: white; background: var(--primary); padding: 3px 8px; border-radius: 5px; flex-shrink: 0; }
+        .log-type { font-weight: 700; font-size: 0.83em; flex-shrink: 0; }
+        .log-note { font-size: 0.86em; color: var(--muted); flex: 1; }
+        .log-del { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1em; transition: color 0.15s; padding: 0 3px; }
+        .log-del:hover { color: var(--danger); }
+        .log-empty { text-align: center; color: var(--muted); font-size: 0.88em; padding: 18px; }
+        .log-auto { font-size: 0.68em; background: #e0f2f1; color: #0077b6; border-radius: 4px; padding: 2px 5px; font-weight: 700; flex-shrink: 0; }
+
+        /* ─── NOTAS ─── */
+        .notes-area { width: 100%; min-height: 90px; padding: 13px; border: 2px solid var(--border); border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.91em; color: var(--text); resize: vertical; outline: none; transition: border-color 0.2s; line-height: 1.7; }
+        .notes-area:focus { border-color: var(--secondary); }
+        .notes-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 9px; font-size: 0.76em; color: var(--muted); }
+        .notes-saved { color: var(--success); font-weight: 700; opacity: 0; transition: opacity 0.4s; }
+        .notes-saved.show { opacity: 1; }
+
+        /* ═══════════════════════════════════════
+           SERVICIOS (ServíTracker simplificado)
+        ═══════════════════════════════════════ */
+
+        /* Tarjeta resumen proveedor */
+        .provider-card {
+            background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%);
+            border: 2px solid #c4b5fd;
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+        .provider-info h3 { margin: 0 0 3px; font-size: 1.15em; color: #5b21b6; font-weight: 700; }
+        .provider-info p { margin: 0; font-size: 0.83em; color: #7c3aed; font-weight: 500; }
+        .provider-stats { display: flex; gap: 20px; flex-wrap: wrap; }
+        .pstat { text-align: center; }
+        .pstat-value { font-size: 1.5em; font-weight: 700; color: #5b21b6; line-height: 1; }
+        .pstat-label { font-size: 0.72em; color: #7c3aed; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Botón registrar visita */
+        .btn-visit {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #7c3aed, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 700;
+            font-size: 1em;
+            cursor: pointer;
+            margin-bottom: 16px;
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-shadow: 0 4px 14px rgba(124,58,237,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-visit:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(124,58,237,0.35); }
+        .btn-visit:active { transform: translateY(0); }
+
+        /* Registro manual de visita */
+        .visit-manual { display: flex; gap: 9px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 20px; }
+        .visit-manual-field label { display: block; font-size: 0.75em; font-weight: 700; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; }
+        .visit-manual-field input {
+            padding: 9px 12px; border: 2px solid var(--border); border-radius: 8px;
+            font-family: 'DM Sans', sans-serif; font-size: 0.88em; outline: none; transition: border-color 0.2s;
+        }
+        .visit-manual-field input:focus { border-color: #a855f7; }
+
+        /* Lista visitas pendientes */
+        .visit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            margin-bottom: 9px;
+            background: #fdfdfd;
+            animation: fadeIn 0.3s ease;
+        }
+        .visit-item:hover { background: #faf8ff; }
+        .visit-date { font-family: 'JetBrains Mono', monospace; font-size: 0.76em; color: white; background: #7c3aed; padding: 3px 9px; border-radius: 5px; flex-shrink: 0; }
+        .visit-amount { font-weight: 700; font-size: 0.9em; color: #5b21b6; flex-shrink: 0; }
+        .visit-label { font-size: 0.85em; color: var(--muted); flex: 1; }
+        .chip-paid    { background: #d4f5e5; color: #1a7a4a; border: 1px solid #a3e6c4; padding: 3px 10px; border-radius: 20px; font-size: 0.73em; font-weight: 700; text-transform: uppercase; }
+        .chip-pending { background: #fff3cd; color: #856404; border: 1px solid #ffc107; padding: 3px 10px; border-radius: 20px; font-size: 0.73em; font-weight: 700; text-transform: uppercase; }
+        .btn-pay {
+            padding: 7px 14px; background: #7c3aed; color: white; border: none;
+            border-radius: 8px; font-family: 'DM Sans', sans-serif; font-weight: 700;
+            font-size: 0.8em; cursor: pointer; transition: background 0.2s; flex-shrink: 0;
+        }
+        .btn-pay:hover { background: #5b21b6; }
+        .btn-visit-del { background: none; border: none; color: #ccc; cursor: pointer; font-size: 1em; transition: color 0.15s; }
+        .btn-visit-del:hover { color: var(--danger); }
+
+        /* Total adeudado */
+        .total-box {
+            background: linear-gradient(135deg, #5b21b6, #7c3aed);
+            color: white;
+            border-radius: 12px;
+            padding: 18px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .total-box .label { font-size: 0.85em; font-weight: 600; opacity: 0.85; }
+        .total-box .amount { font-size: 2em; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+
+        /* Historial pagado */
+        .history-list { max-height: 220px; overflow-y: auto; }
+        .history-item { display: flex; align-items: center; gap: 10px; padding: 9px 13px; border-radius: 8px; border: 1px solid #ede9fe; margin-bottom: 6px; background: #faf8ff; font-size: 0.86em; }
+        .history-date { font-family: 'JetBrains Mono', monospace; font-size: 0.75em; color: #7c3aed; font-weight: 700; }
+        .history-amount { color: #5b21b6; font-weight: 700; }
+        .history-empty { text-align: center; color: var(--muted); font-size: 0.86em; padding: 16px; }
+
+        /* ─── TOAST ─── */
+        #toast {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #1e272e; color: #55efc4;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.8em; font-weight: 700;
+            padding: 10px 20px; border-radius: 30px;
+            opacity: 0; transition: opacity 0.25s, transform 0.25s;
+            pointer-events: none; z-index: 9999; white-space: nowrap;
+        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ─── ANIMATIONS / RESPONSIVE ─── */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 800px) {
+            .bottom-grid, .calc-grid { grid-template-columns: 1fr; }
+            .season-nav { flex-direction: column; }
+            .log-form, .visit-manual { flex-direction: column; }
+            #expiryBar { flex-direction: column; }
+            .provider-card { flex-direction: column; }
+            .tab-btn { font-size: 0.8em; }
+        }
+    </style>
+</head>
+<body>
+<div id="toast"></div>
+<div class="container">
+
+    <!-- HEADER -->
+    <header>
+        <h1>🏠 Casa Hub</h1>
+        <p>Piscina · Servicios — El Hub</p>
+    </header>
+
+    <!-- TAB NAV -->
+    <div class="tab-nav">
+        <button class="tab-btn" id="tabPool" onclick="setTab('pool')">🏊 Piscina</button>
+        <button class="tab-btn" id="tabServi" onclick="setTab('servi')">💜 Servicios</button>
+    </div>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- TAB: PISCINA                                -->
+    <!-- ════════════════════════════════════════════ -->
+    <div class="tab-panel" id="panelPool">
+
+        <div id="expiryBar"></div>
+
+        <div class="season-nav">
+            <button id="btnSum" class="btn-s btn-summer" onclick="setSeason('summer')">☀️ Modo Verano</button>
+            <button id="btnWin" class="btn-s btn-winter" onclick="setSeason('winter')">❄️ Modo Invierno</button>
+        </div>
+
+        <div class="alert-gold">
+            ⚠️ REGLA DE ORO: APAGAR el motor SIEMPRE antes de mover la palanca de la válvula selectora.
+        </div>
+
+        <section class="card" id="seasonDisplay">
+            <h2 id="sTitle">Cargando...</h2>
+            <div id="sDetail" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 14px;"></div>
+        </section>
+
+        <!-- Registro de mantenciones -->
+        <section class="card">
+            <h2>📋 Registro de Mantenciones</h2>
+            <div class="log-form">
+                <input type="date" id="logDate">
+                <select id="logType">
+                    <option value="🧹 Aspirado">🧹 Aspirado</option>
+                    <option value="🔄 Backwash">🔄 Backwash</option>
+                    <option value="💊 Pastilla">💊 Pastilla</option>
+                    <option value="🧪 Cloro líquido">🧪 Cloro líquido</option>
+                    <option value="🌿 Alguicida">🌿 Alguicida</option>
+                    <option value="⚗️ Ajuste pH">⚗️ Ajuste pH</option>
+                    <option value="🍃 Limpieza hojas">🍃 Limpieza hojas</option>
+                    <option value="📐 Nivel agua">📐 Nivel agua</option>
+                    <option value="🔧 Otro">🔧 Otro</option>
+                </select>
+                <input type="text" id="logNote" placeholder="Nota opcional...">
+                <button class="btn-log" onclick="addLog()">+ Registrar</button>
+            </div>
+            <div class="log-list" id="logList"></div>
+        </section>
+
+        <!-- Calculadora -->
+        <section class="card">
+            <h2>🧪 Calculadora de Química</h2>
+            <div class="calc-grid">
+                <div class="calc-field">
+                    <label>pH Actual</label>
+                    <input type="number" id="phInput" min="6" max="9" step="0.1" placeholder="Ej: 7.8">
+                </div>
+                <div class="calc-field">
+                    <label>Cloro Actual (ppm)</label>
+                    <input type="number" id="clInput" min="0" max="10" step="0.1" placeholder="Ej: 0.5">
+                </div>
+            </div>
+            <button class="btn-calc" onclick="calcChemicals()">Calcular dosis para 15.000 L</button>
+            <div id="calcResult"></div>
+        </section>
+
+        <!-- Manual -->
+        <section class="card">
+            <h2>📖 Manual de Procedimientos</h2>
+            <details>
+                <summary>Aspirado de Fondo (Manual)</summary>
+                <div class="content">
+                    <div class="step-item"><div class="step-num">1</div><div class="step-text"><b>Cebado:</b> Sumerge la manguera, llena de agua verticalmente expulsando todo el aire.</div></div>
+                    <div class="step-item"><div class="step-num">2</div><div class="step-text"><b>Conexión:</b> Conecta al fondo del <b>Skimmer</b> (retira el canasto antes).</div></div>
+                    <div class="step-item"><div class="step-num">3</div><div class="step-text"><b>Válvulas:</b> Motor Apagado. Skimmer ABIERTA, Dreno CERRADA.</div></div>
+                    <div class="step-item"><div class="step-num">4</div><div class="step-text"><b>Selectora:</b> <b>FILTER</b> normal, <b>WASTE</b> si hay mucho barro.</div></div>
+                    <div class="step-item"><div class="step-num">5</div><div class="step-text"><b>Ejecución:</b> Timer en <b>ON</b>. Aspira muy lento. Al terminar, apaga y abre el Dreno.</div></div>
+                </div>
+            </details>
+            <details>
+                <summary>Lavado de Filtro (Backwash / Rinse)</summary>
+                <div class="content">
+                    <div class="step-item"><div class="step-num">1</div><div class="step-text">Motor Apagado → palanca a <b>BACKWASH</b>.</div></div>
+                    <div class="step-item"><div class="step-num">2</div><div class="step-text">Motor ON por 2-3 min hasta que el visor esté transparente.</div></div>
+                    <div class="step-item"><div class="step-num">3</div><div class="step-text">Motor Apagado → palanca a <b>RINSE</b> → 45 seg para asentar arena.</div></div>
+                    <div class="step-item"><div class="step-num">4</div><div class="step-text">Motor Apagado → palanca a <b>FILTER</b> → timer a <b>AUTO</b>.</div></div>
+                </div>
+            </details>
+            <details>
+                <summary>Control del Timer (Globaltronics)</summary>
+                <div class="content">
+                    <div class="timer-box">
+                        1. <span class="t-btn">Desbloqueo:</span> Presiona <b>4 veces</b> el botón <b>C/R</b> rápido.<br>
+                        2. <span class="t-btn">Modos:</span> Presiona <b>MANUAL</b>:<br>
+                        &nbsp;&nbsp; — <b>ON</b>: Forzado manual (aspirar / lavar).<br>
+                        &nbsp;&nbsp; — <b>AUTO</b>: Programación diaria.<br>
+                        &nbsp;&nbsp; — <b>OFF</b>: Apagado total.
+                    </div>
+                </div>
+            </details>
+        </section>
+
+        <!-- Checklist -->
+        <section class="card">
+            <h2>✅ Checklist Semanal <span style="font-size:0.68em;font-weight:400;color:#718096">— se auto-registra al marcar</span></h2>
+            <div id="chkContainer" class="task-list"></div>
+            <button class="btn-s" style="background:#edf2f7;color:#4a5568;width:100%;margin-top:13px;" onclick="resetTasks()">Reiniciar Semana</button>
+        </section>
+
+        <!-- Dosificación y Válvulas -->
+        <div class="bottom-grid">
+            <section class="card">
+                <h2>💊 Dosificación (~15.000 L)</h2>
+                <table>
+                    <thead><tr><th>Insumo</th><th>Dosis</th></tr></thead>
+                    <tbody>
+                        <tr><td><b>Pastilla Triple Acción</b></td><td>1 ud. cada 7-10 días</td></tr>
+                        <tr><td><b>Cloro Líquido</b></td><td>250 cc semanal</td></tr>
+                        <tr><td><b>Alguicida</b></td><td>100 cc quincenal</td></tr>
+                        <tr><td><b>Reductor pH</b></td><td>Según test (pH > 7.6)</td></tr>
+                    </tbody>
+                </table>
+            </section>
+            <section class="card">
+                <h2>⚙️ Válvula Selectora</h2>
+                <table>
+                    <thead><tr><th>Posición</th><th>Uso</th></tr></thead>
+                    <tbody>
+                        <tr><td><b>FILTER</b></td><td>Filtrado y aspirado normal</td></tr>
+                        <tr><td><b>BACKWASH</b></td><td>Lavar el filtro</td></tr>
+                        <tr><td><b>RINSE</b></td><td>Asentar arena</td></tr>
+                        <tr><td><b>WASTE</b></td><td>Vaciado / aspirado sucio</td></tr>
+                        <tr><td><b>RECIRCULATE</b></td><td>Mezclar químicos</td></tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+
+        <!-- Notas -->
+        <section class="card">
+            <h2>📝 Notas Semanales</h2>
+            <textarea class="notes-area" id="weeklyNotes" placeholder="Observaciones de esta semana...&#10;Ej: Agua verde el martes, subí el cloro. Bajó nivel 5cm."></textarea>
+            <div class="notes-meta">
+                <span id="notesTimestamp"></span>
+                <span class="notes-saved" id="notesSaved">✓ Guardado</span>
+            </div>
+        </section>
+
+    </div><!-- /panelPool -->
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- TAB: SERVICIOS                              -->
+    <!-- ════════════════════════════════════════════ -->
+    <div class="tab-panel" id="panelServi">
+
+        <!-- Tarjeta proveedor -->
+        <div class="provider-card">
+            <div class="provider-info">
+                <h3>🎙️ Fonoaudióloga</h3>
+                <p>Martes · $24.000 por sesión</p>
+            </div>
+            <div class="provider-stats" id="providerStats">
+                <!-- se rellena con JS -->
+            </div>
+        </div>
+
+        <!-- Total adeudado -->
+        <div class="total-box">
+            <div>
+                <div class="label">TOTAL PENDIENTE</div>
+                <div class="amount" id="totalOwed">$0</div>
+            </div>
+            <div style="font-size:2.5em;opacity:0.3">💳</div>
+        </div>
+
+        <!-- Botón rápido + registro manual -->
+        <section class="card">
+            <h2 class="purple">➕ Registrar Visita</h2>
+            <button class="btn-visit" onclick="addVisitToday()">
+                ⚡ Registrar visita de hoy
+            </button>
+            <div style="text-align:center;font-size:0.8em;color:var(--muted);margin:-8px 0 14px">— o con fecha específica —</div>
+            <div class="visit-manual">
+                <div class="visit-manual-field">
+                    <label>Fecha</label>
+                    <input type="date" id="visitDate">
+                </div>
+                <button class="btn-log" style="background:#7c3aed;margin-bottom:0;align-self:flex-end" onclick="addVisitManual()">+ Agregar</button>
+            </div>
+        </section>
+
+        <!-- Visitas pendientes -->
+        <section class="card">
+            <h2 class="purple">⏳ Visitas Pendientes</h2>
+            <div id="pendingList"></div>
+            <button id="btnPayAll" class="btn-visit" style="margin-top:10px;display:none" onclick="payAll()">
+                ✅ Marcar todas como pagadas
+            </button>
+        </section>
+
+        <!-- Historial pagado -->
+        <section class="card">
+            <h2 class="purple">📂 Historial de Pagos</h2>
+            <div class="history-list" id="historyList"></div>
+        </section>
+
+    </div><!-- /panelServi -->
+
+</div><!-- /container -->
+
+<script>
+// ═══════════════════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════════════════
+function setTab(tab) {
+    localStorage.setItem('casa_tab', tab);
+    document.getElementById('panelPool').classList.toggle('active', tab === 'pool');
+    document.getElementById('panelServi').classList.toggle('active', tab === 'servi');
+    document.getElementById('tabPool').className  = 'tab-btn' + (tab === 'pool'  ? ' active-pool'  : '');
+    document.getElementById('tabServi').className = 'tab-btn' + (tab === 'servi' ? ' active-servi' : '');
+}
+
+// ═══════════════════════════════════════════════════
+//  PISCINA — TEMPORADA
+// ═══════════════════════════════════════════════════
+const poolData = {
+    summer: {
+        t: "☀️ CONFIGURACIÓN VERANO",
+        info: [["Timer","5-6 hrs (11:00–17:00)"],["Cloro","Revisión Semanal"],["Filtro","Lavado Semanal"],["Uso","Alta Demanda"]],
+        tasks: [
+            { label: "Limpiar canasto Skimmer",          logType: "🍃 Limpieza hojas" },
+            { label: "Medir pH y Cloro",                 logType: "⚗️ Ajuste pH" },
+            { label: "Aspirar fondo lento",              logType: "🧹 Aspirado" },
+            { label: "Hacer Backwash y Rinse",           logType: "🔄 Backwash" },
+            { label: "Reponer pastilla cloro",           logType: "💊 Pastilla" },
+            { label: "Añadir refuerzo líquido (noche)",  logType: "🧪 Cloro líquido" },
+            { label: "Verificar nivel de agua",          logType: "📐 Nivel agua" },
+        ]
+    },
+    winter: {
+        t: "❄️ CONFIGURACIÓN INVIERNO",
+        info: [["Timer","1 hr diaria"],["Cloro","Revisión c/ 15 días"],["Filtro","Lavado Mensual"],["Hojas","Limpieza Crítica"]],
+        tasks: [
+            { label: "Retirar hojas del Skimmer",         logType: "🍃 Limpieza hojas" },
+            { label: "Verificar pastilla de cloro",       logType: "💊 Pastilla" },
+            { label: "Controlar nivel de agua (lluvia)",  logType: "📐 Nivel agua" },
+            { label: "Medir pH tras tormentas",           logType: "⚗️ Ajuste pH" },
+        ]
+    }
+};
+
+function setSeason(s) {
+    localStorage.setItem('pool_season', s);
+    document.getElementById('btnSum').className = 'btn-s btn-summer' + (s==='summer' ? ' active-summer' : '');
+    document.getElementById('btnWin').className = 'btn-s btn-winter' + (s==='winter' ? ' active-winter' : '');
+    const data = poolData[s];
+    document.getElementById('sTitle').innerText = data.t;
+    document.getElementById('sDetail').innerHTML = data.info.map(i =>
+        `<div><small style="color:#718096;font-weight:700;font-size:0.73em;text-transform:uppercase">${i[0]}</small><br><b>${i[1]}</b></div>`
+    ).join('');
+    const chk = document.getElementById('chkContainer');
+    chk.innerHTML = '';
+    data.tasks.forEach((t, i) => {
+        const key = `task_${s}_${i}`;
+        const done = localStorage.getItem(key) === 'true';
+        const div = document.createElement('div');
+        div.className = 'task-item' + (done ? ' done' : '');
+        div.onclick = () => toggleT(key, div, t.logType, t.label);
+        div.innerHTML = `<input type="checkbox" ${done ? 'checked' : ''}><span>${t.label}</span>`;
+        chk.appendChild(div);
+    });
+    updateExpiryBar();
+}
+
+function toggleT(k, el, logType, taskLabel) {
+    const cb = el.querySelector('input');
+    cb.checked = !cb.checked;
+    localStorage.setItem(k, cb.checked);
+    el.classList.toggle('done', cb.checked);
+    if (cb.checked && logType) {
+        const today = new Date().toISOString().split('T')[0];
+        const logs = getLogs();
+        logs.unshift({ id: Date.now(), date: today, type: logType, note: taskLabel, auto: true });
+        saveLogs(logs);
+        renderLogs();
+        updateExpiryBar();
+        showToast(`✓ "${logType}" registrado`);
+    }
+}
+
+function resetTasks() {
+    if (confirm("¿Reiniciar checklist de esta semana?")) {
+        const s = localStorage.getItem('pool_season') || 'summer';
+        poolData[s].tasks.forEach((_, i) => localStorage.removeItem(`task_${s}_${i}`));
+        setSeason(s);
+    }
+}
+
+// ═══════════════════════════════════════════════════
+//  PISCINA — LOG
+// ═══════════════════════════════════════════════════
+function getLogs() {
+    try { return JSON.parse(localStorage.getItem('pool_logs') || '[]'); } catch(e) { return []; }
+}
+function saveLogs(logs) { localStorage.setItem('pool_logs', JSON.stringify(logs)); }
+
+function addLog() {
+    const dateVal = document.getElementById('logDate').value;
+    const type    = document.getElementById('logType').value;
+    const note    = document.getElementById('logNote').value.trim();
+    if (!dateVal) { alert("Selecciona una fecha."); return; }
+    const logs = getLogs();
+    logs.unshift({ id: Date.now(), date: dateVal, type, note });
+    saveLogs(logs);
+    document.getElementById('logNote').value = '';
+    renderLogs();
+    updateExpiryBar();
+}
+
+function deleteLog(id) {
+    saveLogs(getLogs().filter(l => l.id !== id));
+    renderLogs();
+    updateExpiryBar();
+}
+
+function renderLogs() {
+    const logs = getLogs();
+    const c = document.getElementById('logList');
+    if (!logs.length) { c.innerHTML = '<div class="log-empty">Sin registros aún.</div>'; return; }
+    c.innerHTML = logs.map(l => {
+        const [y,m,d] = l.date.split('-');
+        const autoTag = l.auto ? `<span class="log-auto">auto</span>` : '';
+        return `<div class="log-entry">
+            <span class="log-date">${d}/${m}/${y}</span>
+            <span class="log-type">${l.type}</span>
+            ${autoTag}
+            <span class="log-note">${l.note || '—'}</span>
+            <button class="log-del" onclick="deleteLog(${l.id})">✕</button>
+        </div>`;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+//  PISCINA — EXPIRY BADGES
+// ═══════════════════════════════════════════════════
+const expiryRules = [
+    { label: "Pastilla",   types: ["💊 Pastilla"],        maxDays: 10, warnDays: 7  },
+    { label: "Backwash",   types: ["🔄 Backwash"],        maxDays: 30, warnDays: 20 },
+    { label: "Cloro Líq.", types: ["🧪 Cloro líquido"],   maxDays: 7,  warnDays: 5  },
+    { label: "Alguicida",  types: ["🌿 Alguicida"],       maxDays: 15, warnDays: 12 },
+];
+
+function daysSince(dateStr) {
+    return Math.floor((new Date() - new Date(dateStr + 'T12:00:00')) / 86400000);
+}
+
+function updateExpiryBar() {
+    const logs = getLogs();
+    const bar  = document.getElementById('expiryBar');
+    bar.innerHTML = '';
+    expiryRules.forEach(rule => {
+        const relevant = logs.filter(l => rule.types.includes(l.type));
+        if (!relevant.length) {
+            bar.innerHTML += `<div class="badge badge-none">📍 ${rule.label}: sin dato</div>`;
+            return;
+        }
+        const days = daysSince(relevant[0].date);
+        const cls  = days >= rule.maxDays ? 'badge-danger' : days >= rule.warnDays ? 'badge-warn' : 'badge-ok';
+        const icon = days >= rule.maxDays ? '🚨' : days >= rule.warnDays ? '⚠️' : '✅';
+        bar.innerHTML += `<div class="badge ${cls}">${icon} ${rule.label}: ${days === 0 ? 'hoy' : `hace ${days}d`}</div>`;
+    });
+}
+
+// ═══════════════════════════════════════════════════
+//  PISCINA — CALCULADORA
+// ═══════════════════════════════════════════════════
+function calcChemicals() {
+    const ph = parseFloat(document.getElementById('phInput').value);
+    const cl = parseFloat(document.getElementById('clInput').value);
+    const res = document.getElementById('calcResult');
+    res.style.display = 'block';
+    let msgs = [], cls = 'result-ok';
+    if (!isNaN(ph)) {
+        if (ph < 7.2)             { msgs.push(`🔵 pH bajo (${ph}): agrega ~${Math.round(((7.4-ph)/0.1)*25)} cc de <b>alcalinizante</b> y espera 4 hrs.`); cls='result-low'; }
+        else if (ph <= 7.6)       { msgs.push(`✅ pH ideal (${ph}): sin ajuste.`); }
+        else if (ph <= 7.9)       { msgs.push(`⚠️ pH alto (${ph}): agrega ~${Math.round(((ph-7.4)/0.1)*40)} cc de <b>reductor de pH</b>. Medir en 4 hrs.`); cls='result-high'; }
+        else                       { msgs.push(`🚨 pH muy alto (${ph}): reductor en dosis fraccionadas, máx 150 cc por vez.`); cls='result-extreme'; }
+    }
+    if (!isNaN(cl)) {
+        if (cl < 0.5)             { msgs.push(`🔵 Cloro bajo (${cl} ppm): agrega <b>250 cc de cloro líquido</b> esta noche con motor ON.`); if(cls==='result-ok') cls='result-low'; }
+        else if (cl <= 3.0)       { msgs.push(`✅ Cloro correcto (${cl} ppm): sin acción.`); }
+        else if (cl <= 5.0)       { msgs.push(`⚠️ Cloro alto (${cl} ppm): no añadir más. Medir en 24 hrs.`); if(cls==='result-ok') cls='result-high'; }
+        else                       { msgs.push(`🚨 Cloro muy alto (${cl} ppm): no uses la piscina. Espera 48 hrs.`); cls='result-extreme'; }
+    }
+    if (!msgs.length) { res.innerHTML = 'Ingresa al menos un valor.'; res.className='result-ok'; return; }
+    res.className = cls;
+    res.innerHTML = msgs.join('<br><br>');
+}
+
+// ═══════════════════════════════════════════════════
+//  PISCINA — NOTAS
+// ═══════════════════════════════════════════════════
+let notesTimer;
+function loadNotes() {
+    const notesEl = document.getElementById('weeklyNotes');
+    const ts = document.getElementById('notesTimestamp');
+    notesEl.value = localStorage.getItem('pool_weekly_notes') || '';
+    const saved = localStorage.getItem('pool_weekly_notes_ts');
+    if (saved) ts.innerText = `Guardado: ${saved}`;
+    notesEl.addEventListener('input', () => {
+        clearTimeout(notesTimer);
+        notesTimer = setTimeout(() => {
+            localStorage.setItem('pool_weekly_notes', notesEl.value);
+            const now = new Date();
+            const stamp = now.toLocaleDateString('es-CL') + ' ' + now.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'});
+            localStorage.setItem('pool_weekly_notes_ts', stamp);
+            ts.innerText = `Guardado: ${stamp}`;
+            const savedEl = document.getElementById('notesSaved');
+            savedEl.classList.add('show');
+            setTimeout(() => savedEl.classList.remove('show'), 2000);
+        }, 800);
+    });
+}
+
+// ═══════════════════════════════════════════════════
+//  SERVICIOS — FONOAUDIÓLOGA
+// ═══════════════════════════════════════════════════
+const VISIT_PRICE = 24000;
+
+function getVisits() {
+    try { return JSON.parse(localStorage.getItem('servi_visits') || '[]'); } catch(e) { return []; }
+}
+function saveVisits(v) { localStorage.setItem('servi_visits', JSON.stringify(v)); }
+
+function fmtDate(dateStr) {
+    const [y,m,d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
+}
+function fmtMoney(n) {
+    return '$' + n.toLocaleString('es-CL');
+}
+
+function addVisitToday() {
+    const today = new Date().toISOString().split('T')[0];
+    addVisit(today);
+    showToast('✓ Visita de hoy registrada');
+}
+
+function addVisitManual() {
+    const dateVal = document.getElementById('visitDate').value;
+    if (!dateVal) { alert("Selecciona una fecha."); return; }
+    addVisit(dateVal);
+    showToast('✓ Visita registrada');
+}
+
+function addVisit(dateStr) {
+    const visits = getVisits();
+    visits.unshift({ id: Date.now(), date: dateStr, amount: VISIT_PRICE, paid: false });
+    saveVisits(visits);
+    renderVisits();
+}
+
+function markPaid(id) {
+    const visits = getVisits().map(v => v.id === id ? { ...v, paid: true } : v);
+    saveVisits(visits);
+    renderVisits();
+    showToast('✓ Visita marcada como pagada');
+}
+
+function payAll() {
+    const visits = getVisits().map(v => ({ ...v, paid: true }));
+    saveVisits(visits);
+    renderVisits();
+    showToast('✓ Todas las visitas pagadas');
+}
+
+function deleteVisit(id) {
+    saveVisits(getVisits().filter(v => v.id !== id));
+    renderVisits();
+}
+
+function renderVisits() {
+    const visits  = getVisits();
+    const pending = visits.filter(v => !v.paid);
+    const paid    = visits.filter(v => v.paid);
+    const total   = pending.reduce((s, v) => s + v.amount, 0);
+
+    // Total
+    document.getElementById('totalOwed').innerText = fmtMoney(total);
+
+    // Stats proveedor
+    const thisMonth = new Date().toISOString().slice(0,7);
+    const sessMonth = visits.filter(v => v.date.startsWith(thisMonth)).length;
+    const totalPaid = paid.reduce((s,v) => s + v.amount, 0);
+    document.getElementById('providerStats').innerHTML = `
+        <div class="pstat"><div class="pstat-value">${pending.length}</div><div class="pstat-label">Pendientes</div></div>
+        <div class="pstat"><div class="pstat-value">${sessMonth}</div><div class="pstat-label">Este mes</div></div>
+        <div class="pstat"><div class="pstat-value">${fmtMoney(totalPaid)}</div><div class="pstat-label">Total pagado</div></div>
+    `;
+
+    // Pendientes
+    const pList = document.getElementById('pendingList');
+    const payAllBtn = document.getElementById('btnPayAll');
+    if (!pending.length) {
+        pList.innerHTML = '<div class="log-empty">Sin visitas pendientes 🎉</div>';
+        payAllBtn.style.display = 'none';
+    } else {
+        pList.innerHTML = pending.map(v => `
+            <div class="visit-item">
+                <span class="visit-date">${fmtDate(v.date)}</span>
+                <span class="visit-amount">${fmtMoney(v.amount)}</span>
+                <span class="visit-label">Fonoaudióloga</span>
+                <span class="chip-pending">Pendiente</span>
+                <button class="btn-pay" onclick="markPaid(${v.id})">✓ Pagar</button>
+                <button class="btn-visit-del" onclick="deleteVisit(${v.id})">✕</button>
+            </div>
+        `).join('');
+        payAllBtn.style.display = pending.length > 1 ? 'flex' : 'none';
+    }
+
+    // Historial
+    const hList = document.getElementById('historyList');
+    if (!paid.length) {
+        hList.innerHTML = '<div class="history-empty">Sin pagos registrados aún.</div>';
+    } else {
+        hList.innerHTML = paid.map(v => `
+            <div class="history-item">
+                <span class="history-date">${fmtDate(v.date)}</span>
+                <span style="flex:1;font-size:0.85em;color:var(--muted)">Fonoaudióloga</span>
+                <span class="history-amount">${fmtMoney(v.amount)}</span>
+                <span class="chip-paid">Pagado</span>
+                <button class="btn-visit-del" onclick="deleteVisit(${v.id})">✕</button>
+            </div>
+        `).join('');
+    }
+}
+
+// ═══════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.innerText = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════
+document.getElementById('logDate').value   = new Date().toISOString().split('T')[0];
+document.getElementById('visitDate').value = new Date().toISOString().split('T')[0];
+
+setTab(localStorage.getItem('casa_tab') || 'pool');
+setSeason(localStorage.getItem('pool_season') || 'summer');
+renderLogs();
+loadNotes();
+renderVisits();
+</script>
+</body>
+</html>
